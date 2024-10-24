@@ -1,0 +1,25 @@
+/* Make sure the container covers the entire page */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+  
+  .background-container {
+    background-image: url('/src/assets/background.jpg'); /* Add the path to your background image */
+    background-size: cover;
+    opacity: 0.9;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+    width: 100%;
+    position: fixed; /* Ensure the background stays fixed as you scroll */
+    top: 0;
+    left: 0;
+    z-index: -1; /* Push it behind other content */
+  
+    /* Add a darker overlay with reduced opacity */
+    background-color: rgba(0, 0, 0, 0.9); /* Darker overlay */
+    background-blend-mode: darken; /* Blends the image with the dark overlay */
+  }
+  

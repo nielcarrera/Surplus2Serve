@@ -1,0 +1,74 @@
+-- create table for user credentials
+CREATE TABLE user_tbl(
+    userID int (11) AUTO_INCREMENT PRIMARY KEY,
+	username VARCHAR(16),
+    password VARCHAR(255)
+);
+-- table for pre-defined roles
+CREATE TABLE roles(
+	roleId int(11) AUTO_INCREMENT primary key,
+    roleName VARCHAR(255)
+);
+-- create table for user roles
+CREATE TABLE userRole_tbl(
+	userRoleTblID int AUTO_INCREMENT PRIMARY KEY,
+    userId int (11),
+    roleId int (11),
+    FOREIGN KEY (roleId) REFERENCES roles (roleID)
+);
+-- table for user details
+CREATE TABLE userDetails_tbl(
+	userDetailsID int(11) AUTO_INCREMENT primary key,
+    userId int(11),
+    firstName VARCHAR(255),
+    lastName VARCHAR(255),
+    dateCreated datetime,
+    FOREIGN KEY (userId) REFERENCES user_tbl(userID)
+);
+-- table for pre-defined location
+CREATE TABLE location(
+	locationID int AUTO_INCREMENT PRIMARY KEY,
+    location VARCHAR(255)
+);
+-- table for user location
+CREATE TABLE userLocation_tbl(
+	userLocationID int(11) AUTO_INCREMENT PRIMARY KEY,
+    userId int(11),
+    locationId int(11),
+    FOREIGN KEY (locationId) REFERENCES location (locationID),
+    FOREIGN KEY (userId) REFERENCES user_tbl (userID)
+);
+
+DELIMITER //
+
+CREATE PROCEDURE CreateUser(
+    IN p_username VARCHAR(50),
+    IN p_pass VARCHAR(100),
+    IN p_firstName VARCHAR(50),
+    IN p_lastName VARCHAR(50),
+    IN p_location int
+)
+BEGIN
+    DECLARE user_id INT;
+
+    -- Insert into users table
+    INSERT INTO user_tbl (username, password) VALUES (p_username, p_pass);
+    
+    -- Get the last inserted user id
+    SET user_id = LAST_INSERT_ID();
+    
+    -- Insert into profiles table
+    INSERT INTO userdetails_tbl (userId, firstName, lastName) 
+    VALUES (user_id, p_firstName, p_lastName);
+
+    -- Insert into locations table (assuming the location needs to be added if it doesn't exist)
+    INSERT INTO userlocation_tbl (userId, locationId) 
+    VALUES (user_id, p_location);
+    
+    -- Insert role into user role table
+    INSERT INTO userrole_tbl(userId, roleId)
+    VALUES (user_id, 2);
+    
+END //
+
+DELIMITER ;

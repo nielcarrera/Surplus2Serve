@@ -1,0 +1,267 @@
+
+.signup-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  
+  }
+  
+.landingpage {
+    width: 100%;
+    height: 100vh;
+    display:flex;
+    z-index: -1;
+}
+
+h3 {
+  font-size: 25px;
+  margin-bottom: 30px;
+  color:rgba(75,168,37,1);
+}
+
+h3 span {
+   font-size: 25px;
+   color:rgba(255,218,69,1);
+}
+
+.video-bg {
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    z-index: -2;
+    object-fit: cover;
+}
+
+.bg-overlay {
+    z-index: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0,0,0,0.7);
+
+}
+  .signup-form {
+    background-color:  rgba(53, 51, 51, 0.5);
+    border-radius: 8px;
+    padding: 40px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+    max-width: 450px;
+    text-align: center;
+    margin-left: 80px;
+    z-index: 1;
+    top:1;
+    left:3%;
+    gap: 20px;
+    position: absolute;
+    
+  }
+
+  .input-group {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .signup-form h2 {
+    font-size: 2rem;
+    color: #cccfcd;
+    margin-bottom: 20px;
+  }
+  
+  .signup-form p {
+    margin-bottom: 40px;
+    color: #bbbbae;
+    font-size: 16px;
+  }
+  
+  .s-input-field {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    margin-bottom: 20px;
+    border: 1px solid #c7c0c0;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+
+  .s-input-field-full {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    margin-bottom: 20px;
+    border: 1px solid #c7c0c0;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  .sign-in-btn {
+    background: rgb(75,168,37);
+    background: linear-gradient(90deg, rgba(75,168,37,1) 0%, rgba(255,218,69,1) 95%);
+    color: black;
+    font-weight: 500;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    width: 70%;
+    margin-top: 10px;
+    margin-bottom: 30px;
+    transition: 0.5s;
+  }
+  
+
+  .sign-in-btn:hover {
+    transform: scale(1.05);
+}
+  
+  .sign-up-link {
+    color: #007bff;
+    cursor: pointer;
+  }
+  
+
+  .header {
+    position: absolute;
+    right: 5%;
+    width: 40%;
+    height: 55vh;
+    padding: 30px;
+    top: 30%;
+    z-index: 1; 
+  }
+
+  h4 {
+    font-family: "Outfit", sans-serif;
+    font-size: 55px;
+    font-weight: 500;
+    color: white;
+  }
+  
+  h4 span {
+    color: rgba(75,168,37,1) ;
+  }
+
+  h4 span2 {
+    color: rgba(255,218,69,1) ;
+  }
+  
+  .startnow-btn {
+    background: rgb(75,168,37);
+    background: linear-gradient(90deg, rgba(75,168,37,1) 0%, rgba(255,218,69,1) 95%);
+    padding: 10px 40px;
+    color: #333;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 30px;
+    border-color: white;
+    margin-right: 20px;
+    cursor: pointer;
+    transition: 0.5s;
+    margin-top: 50px;
+    position: absolute;
+    right: 0;
+
+}
+
+.startnow-btn:hover {
+    transform: scale(1.05);
+}
+
+  
+  /* Media Queries for Responsiveness */
+  
+  /* For tablets and small screens */
+  @media (max-width: 1024px) {
+    .login-container {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+  
+    .login-form {
+      width: 45%;
+      margin-left: 0;
+      margin-bottom: 20px;
+      position: absolute;
+      left: 3%;
+    }
+    .header {
+      width: 50%;
+      right: 0;
+      text-align: center;
+      top: 30%; /* Adjust to ensure it is visible */
+    }
+    .startnow-btn {
+      margin-top: 100px;  
+    }
+     
+    }
+  
+    h4 {
+      font-size: 40px; 
+    }
+  
+
+  /* For mobile screens */
+  @media (max-width: 768px) {
+    .login-form {
+      width: 90%;
+      padding: 20px;
+    }
+  
+    .header {
+      width: 90%;
+      top: 15%; /* Adjust the vertical position */
+      right: 0;
+      text-align: center; /* Center align for mobile */
+    }
+  
+    h4 {
+      font-size: 32px; /* Further reduce font size */
+    }
+  
+    .startnow-btn {
+      font-size: 14px;
+      padding: 8px 20px;
+      width: auto;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .login-form {
+      width: 95%;
+      padding: 15px;
+    }
+  
+    .input-field {
+      padding: 8px;
+    }
+  
+    .sign-in-btn {
+      padding: 8px;
+    }
+  
+    .header {
+      width: 95%;
+      top: 10%;
+      padding: 10px;
+      text-align: center;
+    }
+  
+    h4 {
+      font-size: 24px; /* Smaller font for very small screens */
+    }
+  
+    .startnow-btn {
+      font-size: 12px;
+      padding: 6px 15px;
+      width: 100%; /* Make the button fill the available width */
+      margin-top: 10px;
+    }
+  }
+  
