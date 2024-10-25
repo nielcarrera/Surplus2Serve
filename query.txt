@@ -9,6 +9,7 @@ CREATE TABLE roles(
 	roleId int(11) AUTO_INCREMENT primary key,
     roleName VARCHAR(255)
 );
+etits
 -- create table for user roles
 CREATE TABLE userRole_tbl(
 	userRoleTblID int AUTO_INCREMENT PRIMARY KEY,
