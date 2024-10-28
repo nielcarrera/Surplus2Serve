@@ -77,7 +77,7 @@ function Loginform() {
         </p>
       </form>
 
-      <div className="header">
+      <div className="header-login">
       <h4>Boost your <span>Economy</span> Share your<span2> Surplus</span2></h4>
       <button onClick={goToSignUp} className="startnow-btn">Start Now</button>
       </div>
