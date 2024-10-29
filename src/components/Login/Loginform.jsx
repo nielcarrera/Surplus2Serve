@@ -71,7 +71,7 @@ function Loginform() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button type="submit" className="sign-in-btn">Sign In</button>
+        <button type="submit" onClick={goToSignUp} className="sign-in-btn">Sign In</button>
         <p>
           Don’t have an account yet? <span onClick={goToSignUp} className="sign-up-link">Sign Up</span>
         </p>

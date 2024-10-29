@@ -24,7 +24,7 @@ function Requests() {
         date: '15/10/24',
         location: 'Salawag',
         category: 'Canned Goods',
-        foodname: 'Chongke',
+        foodname: 'Chocolate',
         quantity: 34,
       },
       {
@@ -42,7 +42,7 @@ function Requests() {
         date: '15/10/24',
         location: 'Area',
         category: 'Packed Foods',
-        foodname: 'Chongke',
+        foodname: 'Ganna Chocolate',
         quantity: 34,
       },
       
@@ -74,8 +74,10 @@ function Requests() {
       const matchesSearchTerm = 
         searchTerm === '' || 
         request.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        request.date.toLowerCase().includes(searchTerm.toLowerCase())||
+        request.location.toLowerCase().includes(searchTerm.toLowerCase())||
+        request.category.toLowerCase().includes(searchTerm.toLowerCase())||
         request.foodname.toLowerCase().includes(searchTerm.toLowerCase());
-
       // Check if the category is selected as 'Others' or matches a predefined category
       const matchesCategory = 
         (category === 'All') || 
