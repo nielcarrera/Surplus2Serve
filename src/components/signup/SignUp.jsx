@@ -3,11 +3,13 @@ import './SignUp.css'; // Reuse the same CSS file
 import { useNavigate } from 'react-router-dom';
 import bgvideo from '../../assets/bgvideo.mp4';
 import axios from "axios";
+import Alert from "../alert";
 
 function SignupForm() {
   const [message, setMessage] = useState("");
   const [location, setLocation] = useState([]);
   const [error, setError] = useState(null);
+  const [alertType, setAlertType] = useState("info"); // Default alert type
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -20,7 +22,7 @@ function SignupForm() {
   useEffect(() => {
       const fetchLocations = async () => {
           try {
-              const response = await axios.get('http://localhost:5000/locations');
+              const response = await axios.get('http://localhost:5000/api/locations');
               setLocation(response.data); // Set the fetched data to state
           } catch (err) {
               setError('Failed to fetch locations'); // Handle error
@@ -42,26 +44,29 @@ const handleChange = (e) => {
   const navigate = useNavigate();
 
   const handleSignup = async (e) => {
-    e.preventDefault();
-    try {
-        console.log(formData.location);
-        const response = await axios.post('http://localhost:5000/register', formData);
-        console.log(response.data);
-        // Handle success (e.g., set a success message)
-        setMessage(response.data.message); 
-    } catch (error) {
-        console.error(error);
+      e.preventDefault();
+      try {
+          const response = await axios.post('http://localhost:5000/auth/register', formData);
+          setAlertType("success");
+          setMessage(response.data.message);
 
-        // Safely handle cases where error.response is undefined
-        if (error.response) {
-            setMessage(error.response.data.message || 'Something went wrong');
-        } else if (error.request) {
-            setMessage('No response from the server. Please try again later.');
-        } else {
-            setMessage('An unknown error occurred.');
-        }
-    }
-};
+      } catch (error) {
+          if (error.response && error.response.data && error.response.data.message) {
+              setAlertType("error");
+              setMessage(error.response.data.message);
+          } else if (error.request) {
+              setAlertType("warning");
+              setMessage('No response from the server. Please try again later.');
+          } else {
+              setAlertType("error");
+              setMessage('An unknown error occurred.');
+          }
+      }
+  };
+
+  const closeAlert = () => {
+    setMessage("");
+  };
 
   const goToLogin = () => {
     navigate('/login'); // Redirect to the login page
@@ -69,6 +74,9 @@ const handleChange = (e) => {
 
   return (
     <div className="signup-container">
+      {message && (
+      <Alert message={message} onClose={closeAlert} type= {alertType}/>
+      )}
       <div className="landingpage">
         <video src={bgvideo} autoPlay muted loop className="video-bg" />
         <div className="bg-overlay"></div>

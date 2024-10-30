@@ -14,12 +14,15 @@ function Loginform() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-        const response = await axios.post('http://localhost:5000/login', { username, password });
+        const response = await axios.post('http://localhost:5000/auth/login', { username, password });
         setMessage(response.data.message);
-        console.log(message);
+        console.log(response.data.message);
+        const token = response.data.token;
+        localStorage.setItem('jwtToken', token);
+        goToAdmin();
     } catch (error) {
         console.error(error.response);  // Log the error response
-        setMessage(error.response?.data?.message || 'Error logging in');
+        alert(error.response?.data?.message || 'Error logging in');
     }
 };
 
@@ -27,21 +30,10 @@ function Loginform() {
     navigate('/signup'); // Redirect to the signup page
   }; 
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   // Here you would add the logic to send the data to the backend.
-  //   console.log("Submitted:", { username, password });
+  const goToAdmin = () => {
+    navigate('/admin');
+  }
 
-  //   // For example, you could use fetch or axios to send a POST request:
-  //   // fetch('/api/login', {
-  //   //   method: 'POST',
-  //   //   headers: { 'Content-Type': 'application/json' },
-  //   //   body: JSON.stringify({ username, password })
-  //   // })
-  //   // .then(response => response.json())
-  //   // .then(data => console.log(data))
-  //   // .catch(error => console.error('Error:', error));
-  // };
 
   return ( 
 
@@ -53,7 +45,7 @@ function Loginform() {
         <div className="bg-overlay"></div> </div>
      
 
-      <form className="login-form" onSubmit={handleLogin}>
+      <form className="login-form">
         <h3>S <span> 2</span> S</h3>
         <h2>Welcome</h2>
         <p>Login to access your account</p>
@@ -71,7 +63,7 @@ function Loginform() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button type="submit" onClick={goToSignUp} className="sign-in-btn">Sign In</button>
+        <button type="submit" onClick={handleLogin} className="sign-in-btn">Sign In</button>
         <p>
           Don’t have an account yet? <span onClick={goToSignUp} className="sign-up-link">Sign Up</span>
         </p>

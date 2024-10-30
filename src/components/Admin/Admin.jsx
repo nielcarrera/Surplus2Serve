@@ -1,50 +1,72 @@
+import axios from 'axios';
+import { jwtDecode }   from 'jwt-decode';
+import jwt from 'jsonwebtoken';
 import React from 'react'
-import { BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill, BsFillBellFill}
- from 'react-icons/bs'
+import { BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill, BsFillBellFill} from 'react-icons/bs';
  import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
 
 function Admin() {
+    const token = localStorage.getItem('jwtToken'); // Retrieve the token
+    // Function to decode the token
+    const decodeToken = (token) => {
+        try {
+            const decoded = jwt_decode(token);
+            return decoded; // Returns the decoded payload
+        } catch (err) {
+            console.error('Token decoding failed:', err.message);
+            return null; // Return null if decoding fails
+        }
+    };
+
+    // Usage
     
-  return (
-    <main className='main-container'>
+    if (token) {
+        const decodedPayload = decodeToken(token);
+        console.log('Decoded Payload:', decodedPayload);
+    } else {
+        console.log('No token found.');
+    }
 
-        <div className='main-title'>
-            <h3>WELCOME BACK 
-     <br></br> <span>Venniel Carrera (admin)</span></h3>
-        </div>
+    return (
+        <main className='main-container'>
 
-        <div className='main-cards'>
-            <div className='card'>
-                <div className='card-inner'>
-                    <h3>TOTAL USERS </h3>
-                    <BsPeopleFill className='card_icon'/>
-                </div>
-                <h1>300</h1>
+            <div className='main-title'>
+                <h3>WELCOME BACK 
+        <br></br> <span>Venniel Carrera (admin)</span></h3>
             </div>
-            <div className='card'>
-                <div className='card-inner'>
-                    <h3>FOOD SHARED</h3>
-                    <BsFillGrid3X3GapFill className='card_icon'/>
+
+            <div className='main-cards'>
+                <div className='card'>
+                    <div className='card-inner'>
+                        <h3>TOTAL USERS </h3>
+                        <BsPeopleFill className='card_icon'/>
+                    </div>
+                    <h1>300</h1>
                 </div>
-                <h1>12</h1>
-            </div>
-            <div className='card'>
-                <div className='card-inner'>
-                    <h3>FOOD RECIEVED</h3>
-                    <BsFillGrid3X3GapFill className='card_icon'/>
+                <div className='card'>
+                    <div className='card-inner'>
+                        <h3>FOOD SHARED</h3>
+                        <BsFillGrid3X3GapFill className='card_icon'/>
+                    </div>
+                    <h1>12</h1>
                 </div>
-                <h1>33</h1>
+                <div className='card'>
+                    <div className='card-inner'>
+                        <h3>FOOD RECIEVED</h3>
+                        <BsFillGrid3X3GapFill className='card_icon'/>
+                    </div>
+                    <h1>33</h1>
+                </div>
+                
             </div>
+
             
-        </div>
+
+            
 
         
-
-        
-
-       
-    </main>
-  )
+        </main>
+    )
 }
 
 export default Admin

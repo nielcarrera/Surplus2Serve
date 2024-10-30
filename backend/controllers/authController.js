@@ -1,0 +1,88 @@
+// controllers/authController.js
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const userModel = require('../models/userModel');
+
+const register = (req, res) => {
+    const { firstName, lastName, username, password, confirmPassword, location } = req.body;
+    if (!firstName || !lastName || !username || !password || !confirmPassword || !location) {
+        return res.status(400).json({ message: 'All fields are required' });
+    }
+    if (password !== confirmPassword) {
+        return res.status(400).json({ message: 'Passwords do not match' });
+    }
+
+    userModel.findUserByUsername(username, (err, result) => {
+        if (err) return res.status(500).json({ message: err });
+        if (result.length > 0) {
+            return res.status(400).json({ message: 'User already exists' });
+        }
+
+        bcrypt.hash(password, 10, (err, hashedPassword) => {
+            if (err) return res.status(500).json({ message: 'Error hashing password' });
+            userModel.createUser(username, hashedPassword, firstName, lastName, location, (err) => {
+                if (err) {
+                    console.error("MySQL error:", error);
+                    return res.status(500).json({
+                        success: false,
+                        message: "Internal server error",
+                        error: err.message, // For debugging; hide this in production
+                    });
+                }
+                res.status(200).json({
+                    success: true,
+                    message: 'User registered successfully' 
+                });
+            });
+        });
+    });
+};
+
+const login = async (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ message: 'Username and password are required.' });
+    }
+
+    try {
+        const result = await userModel.findUserByUsername(username);
+        if (!result || result.length === 0) {
+            return res.status(400).json({ message: 'User not found.' });
+        }
+
+        const user = result[0];
+        const id = user.userID;
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Invalid credentials' });
+        }
+
+        console.log(`User ID for full name lookup: ${id}`); // Log user ID
+        const userFullNameResult = await userModel.findUserFullName(id);
+        console.log('User full name result:', userFullNameResult); // Log result
+
+        if (!userFullNameResult || userFullNameResult.length === 0) {
+            return res.status(404).json({ message: 'Full name not found.' });
+        }
+
+        const userFullName = userFullNameResult[0];
+        if (!userFullName.firstName || !userFullName.lastName) {
+            return res.status(404).json({ message: 'First name or last name not found.' });
+        }
+
+        const fullName = userFullName.firstName + ' ' + userFullName.lastName;
+        console.log(fullName);
+
+        const token = jwt.sign({ id: id, name: fullName }, 'secretkey');
+        return res.status(200).json({ message: 'Login successful', token });
+    } catch (err) {
+        console.error(err); // Log the error for debugging
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+
+
+
+module.exports = { register, login };
