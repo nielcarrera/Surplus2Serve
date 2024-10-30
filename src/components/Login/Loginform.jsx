@@ -71,13 +71,13 @@ function Loginform() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button type="submit" className="sign-in-btn">Sign In</button>
+        <button type="submit" onClick={goToSignUp} className="sign-in-btn">Sign In</button>
         <p>
           Don’t have an account yet? <span onClick={goToSignUp} className="sign-up-link">Sign Up</span>
         </p>
       </form>
 
-      <div className="header">
+      <div className="header-login">
       <h4>Boost your <span>Economy</span> Share your<span2> Surplus</span2></h4>
       <button onClick={goToSignUp} className="startnow-btn">Start Now</button>
       </div>

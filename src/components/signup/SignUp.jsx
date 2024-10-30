@@ -143,7 +143,7 @@ const handleChange = (e) => {
   </p>
 </form>
 
-      <div className="header">
+<div className="header-signup">
         <h4>Join the <span>Community</span>, Share your<span2> Surplus</span2></h4>
         <button onClick={goToLogin} className="startnow-btn">Login Now</button>
       </div>

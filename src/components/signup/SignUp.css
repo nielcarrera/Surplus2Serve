@@ -125,7 +125,7 @@ h3 span {
   }
   
 
-  .header {
+  .header-signup {
     position: absolute;
     right: 5%;
     width: 40%;
@@ -135,7 +135,7 @@ h3 span {
     z-index: 1; 
   }
 
-  h4 {
+   h4 {
     font-family: "Outfit", sans-serif;
     font-size: 55px;
     font-weight: 500;
