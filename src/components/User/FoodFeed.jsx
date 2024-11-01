@@ -6,9 +6,9 @@ function FoodFeed() {
     const [browseFood, setBrowseFood] = useState('');
     const [food, setFood] = useState([]);
     const [category, setCategory] = useState([]);
-    const [scategory, setScategory] = useState('0');
+    const [scategory, setScategory] = useState('All');
     const [location, setLocation] = useState([]);
-    const [slocation, setSlocation] = useState('0');
+    const [slocation, setSlocation] = useState('All');
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredRequests, setFilteredRequests] = useState([]);
 
@@ -38,11 +38,11 @@ function FoodFeed() {
                 browseFood === '' || 
                 food.Foodname.toLowerCase().includes(browseFood.toLowerCase());
             const matchesCategory = 
-                (scategory === '0') ||
-                (scategory === food.Category);
+                (scategory === 'All') ||
+                (scategory === food.CategoryName);
             const matchesLocation = 
-                (slocation === '0') || 
-                (slocation === food.locationId);
+                (slocation === 'All') || 
+                (slocation === food.location);
 
             return matchesSearchTerm && matchesCategory && matchesLocation;
         });
@@ -67,17 +67,17 @@ function FoodFeed() {
                     <select 
                         value={scategory} 
                         onChange={(e) => setScategory(e.target.value)}>
-                        <option value="0">Select a category:</option>
+                        <option value="All">Select a category:</option>
                         {category.map(cat => (
-                            <option key={cat.id} value={cat.id}>{cat.foodCategory}</option>
+                            <option key={cat.id} value={cat.foodCategory}>{cat.foodCategory}</option>
                         ))}
                     </select>
                     <select 
                         value={slocation} 
                         onChange={(e) => setSlocation(e.target.value)}>
-                        <option value="0">Select a location:</option>
+                        <option value="All">Select a location:</option>
                         {location.map(loc => (
-                            <option key={loc.id} value={loc.locationID}>{loc.location}</option>
+                            <option key={loc.id} value={loc.location}>{loc.location}</option>
                         ))}  
                     </select>
                     <button className='search-button' onClick={handleSearch}>Search</button>
