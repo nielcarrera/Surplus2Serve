@@ -47,10 +47,13 @@ const handleChange = (e) => {
       e.preventDefault();
       try {
           const response = await axios.post('http://localhost:5000/auth/register', formData);
+          console.log("flag try");
           setAlertType("success");
           setMessage(response.data.message);
+          console.log(response.data.message);
 
       } catch (error) {
+        console.log(error.response.data.message);
           if (error.response && error.response.data && error.response.data.message) {
               setAlertType("error");
               setMessage(error.response.data.message);

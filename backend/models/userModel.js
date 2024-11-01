@@ -8,33 +8,62 @@ const createUser = (username, hashedPassword, firstName, lastName, location, cal
 };
 
 // In your user model file
-const findUserByUsername = (username) => {
+function findUserByUsername(username) {
     return new Promise((resolve, reject) => {
-        const query = 'SELECT * FROM user_tbl WHERE username = ?';
-        db.query(query, [username], (err, result) => {
-            if (err) {
-                return reject(err); // Reject the promise on error
-            }
-            resolve(result); // Resolve the promise with the result
+        db.query('SELECT * FROM user_tbl WHERE username = ?', [username], (error, results) => {
+            if (error) return reject(error);
+            resolve(results);
         });
     });
-};
+}
 
-// Assuming you want to keep findUserFullName similar
-const findUserFullName = (id) => {
+
+function findUserFullName(id) {
     return new Promise((resolve, reject) => {
-        const query = 'SELECT * FROM userdetails_tbl WHERE id = ?';
-        console.log(`Executing query: ${query} with ID: ${id}`); // Log the query
-        db.query(query, [id], (err, result) => {
-            if (err) {
-                return reject(err);
+        const query = 'SELECT firstName, lastName FROM userdetails_tbl WHERE userId = ?';
+        console.log(`Executing query: ${query} with ID: ${id}`);
+
+        db.query(query, [id], (error, results) => {
+            if (error) {
+                console.error('Error executing query:', error); // Improved error logging
+                return reject(error); // Reject the promise on error
             }
-            console.log('Query result:', result); // Log the result
-            resolve(result);
+            
+            if (results.length === 0) {
+                console.warn(`No user found with ID: ${id}`);
+                return resolve(null); // Resolve with null if no user is found
+            }
+
+            console.log('Query result:', results); // Log the result
+            resolve(results[0]); // Resolve with the first matched row
         });
     });
-};
+}
+
+function findUserRole(id){
+    return new Promise((resolve, reject) => {
+        const query = 'SELECT roleId FROM userrole_tbl WHERE userId = ?';
+        console.log(`Executing query: ${query} with ID: ${id}`);
+
+        db.query(query, [id], (error, results) => {
+            if (error) {
+                console.error('Error executing query:', error); // Improved error logging
+                return reject(error); // Reject the promise on error
+            }
+            
+            if (results.length === 0) {
+                console.warn(`No user found with ID: ${id}`);
+                return resolve(null); // Resolve with null if no user is found
+            }
+
+            console.log('Query result:', results); // Log the result
+            resolve(results[0]); // Resolve with the first matched row
+        });
+    });
+}
 
 
 
-module.exports = { findUserByUsername, createUser, findUserFullName};
+
+
+module.exports = { findUserByUsername, createUser, findUserFullName, findUserRole};

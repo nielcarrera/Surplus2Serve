@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const userModel = require('../models/userModel');
 
 const register = (req, res) => {
+    console.log("flag register");
     const { firstName, lastName, username, password, confirmPassword, location } = req.body;
     if (!firstName || !lastName || !username || !password || !confirmPassword || !location) {
         return res.status(400).json({ message: 'All fields are required' });
@@ -13,8 +14,10 @@ const register = (req, res) => {
     }
 
     userModel.findUserByUsername(username, (err, result) => {
+        console.log(username);
         if (err) return res.status(500).json({ message: err });
         if (result.length > 0) {
+            console.log("user exist");
             return res.status(400).json({ message: 'User already exists' });
         }
 
@@ -46,6 +49,7 @@ const login = async (req, res) => {
     }
 
     try {
+        // Find user by username
         const result = await userModel.findUserByUsername(username);
         if (!result || result.length === 0) {
             return res.status(400).json({ message: 'User not found.' });
@@ -53,31 +57,42 @@ const login = async (req, res) => {
 
         const user = result[0];
         const id = user.userID;
+
+        // Compare password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
         console.log(`User ID for full name lookup: ${id}`); // Log user ID
-        const userFullNameResult = await userModel.findUserFullName(id);
-        console.log('User full name result:', userFullNameResult); // Log result
 
-        if (!userFullNameResult || userFullNameResult.length === 0) {
+        // Fetch user full name
+        const userFullName = await userModel.findUserFullName(id);
+        if (!userFullName) {
             return res.status(404).json({ message: 'Full name not found.' });
         }
 
-        const userFullName = userFullNameResult[0];
-        if (!userFullName.firstName || !userFullName.lastName) {
-            return res.status(404).json({ message: 'First name or last name not found.' });
+        const fullName = `${userFullName.firstName} ${userFullName.lastName}`;
+        console.log(`Full name retrieved: ${fullName}`);
+
+        // Fetch user role
+        const userRole = await userModel.findUserRole(id);
+        if (!userRole) {
+            return res.status(404).json({ message: 'User role not found.' });
         }
 
-        const fullName = userFullName.firstName + ' ' + userFullName.lastName;
-        console.log(fullName);
+        console.log(`User role retrieved: ${userRole.roleId}`);
 
-        const token = jwt.sign({ id: id, name: fullName }, 'secretkey');
+        // Generate JWT including user role
+        const token = jwt.sign(
+            { id: id, name: fullName, role: userRole.roleId }, // Add role to the payload
+            'secretkey',
+            { expiresIn: '1h' }
+        );
+
         return res.status(200).json({ message: 'Login successful', token });
     } catch (err) {
-        console.error(err); // Log the error for debugging
+        console.error('Error during login:', err); // Log the error for debugging
         return res.status(500).json({ message: 'Internal server error' });
     }
 };

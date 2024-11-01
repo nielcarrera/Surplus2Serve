@@ -1,6 +1,5 @@
 import axios from 'axios';
-import { jwtDecode }   from 'jwt-decode';
-import jwt from 'jsonwebtoken';
+import  {jwtDecode} from 'jwt-decode';
 import React from 'react'
 import { BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill, BsFillBellFill} from 'react-icons/bs';
  import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
@@ -10,19 +9,21 @@ function Admin() {
     // Function to decode the token
     const decodeToken = (token) => {
         try {
-            const decoded = jwt_decode(token);
+            const decoded = jwtDecode(token);
             return decoded; // Returns the decoded payload
         } catch (err) {
             console.error('Token decoding failed:', err.message);
             return null; // Return null if decoding fails
         }
     };
-
+    let username = '';
     // Usage
     
     if (token) {
         const decodedPayload = decodeToken(token);
         console.log('Decoded Payload:', decodedPayload);
+        username = decodedPayload.name;
+        console.log(username);
     } else {
         console.log('No token found.');
     }
@@ -32,7 +33,7 @@ function Admin() {
 
             <div className='main-title'>
                 <h3>WELCOME BACK 
-        <br></br> <span>Venniel Carrera (admin)</span></h3>
+        <br></br> <span>{username}</span></h3>
             </div>
 
             <div className='main-cards'>
@@ -59,8 +60,6 @@ function Admin() {
                 </div>
                 
             </div>
-
-            
 
             
 
