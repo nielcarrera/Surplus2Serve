@@ -15,6 +15,7 @@ const getAllFood = (callback) => {
         p.foodName AS Foodname,
         p.datePosted AS Date,
         d.postedFoodCategory AS Category,
+        fc.foodCategory AS CategoryName,
         d.quantity,
         d.expiry_date,
         d.availability,
@@ -28,10 +29,10 @@ const getAllFood = (callback) => {
     JOIN 
         userlocation_tbl ul ON p.foodOwnerId = ul.userId
     JOIN 
+        foodCategory_tbl fc ON d.postedFoodCategory = fc.id
+    JOIN
         location l ON ul.locationId = l.locationID;
 `;
-
-
     db.query(query, callback);
 }
 module.exports = { getAllFoodCategory, getAllFood };
