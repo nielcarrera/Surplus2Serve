@@ -14,22 +14,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar, setActiveTab }) {
         <li className='sidebar-list-item' onClick={() => setActiveTab('Overview')}>
           <BsGrid1X2Fill className='icon'/> Overview
         </li>
-        <li className='sidebar-list-item' onClick={() => setActiveTab('Requests')}>
-          <BsFillArchiveFill className='icon'/> Requests
+        <li className='sidebar-list-item' onClick={() => setActiveTab('Food Feed')}>
+          <BsFillArchiveFill className='icon'/> Food Feed
         </li>
-        <li className='sidebar-list-item' onClick={() => setActiveTab('ActivityLog')}>
-          <BsFillGrid3X3GapFill className='icon'/> Activity Log
-        </li>
-        
-        <li className='sidebar-list-item'>
-        <a href="">
-        <BsPeopleFill className='icon'/> Settings
-        </a>
-        </li>
-        <li className='sidebar-list-item'>
-        <a href="">
-        <BsListCheck className='icon'/> Notification
-        </a>
+        <li className='sidebar-list-item' onClick={() => setActiveTab('My Surplus')}>
+          <BsFillGrid3X3GapFill className='icon'/> My Surplus
         </li>
         </ul>
         </aside>

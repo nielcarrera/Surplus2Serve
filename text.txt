@@ -1,0 +1,9 @@
+CALL InsertPostedFood(
+    @foodOwnerId,      -- The ID of the owner of the food
+    @foodName,         -- The name of the food being posted
+    @postedFoodCategory, -- The category ID for the food
+    @quantity,         -- The quantity of the food being posted
+    @expiry_date,      -- The expiry date of the food
+    @availability,     -- Availability status (e.g., 'Yes' or 'No')
+    @description       -- A description of the food item
+);

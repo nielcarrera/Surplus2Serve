@@ -2,7 +2,7 @@ import { useState } from 'react'
 import '../components/Admin/Admin.css'
 import User from '../components/User/User';
 import Sidebar from '../components/User/Sidebar';
-
+import FoodFeed from '../components/User/FoodFeed';
 function Userpage() {
 
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
@@ -16,8 +16,8 @@ function Userpage() {
     switch (activeTab) {
       case 'Overview':
         return <User />;
-      case 'Requests':
-        return <Requests />;
+      case 'Food Feed':
+        return <FoodFeed/>;
       case 'ActivityLog':
         return <ActivityLog />;
       default:
