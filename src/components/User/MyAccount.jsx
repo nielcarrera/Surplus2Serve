@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PersonalDetails from "./PersonalDetails";
 import { jwtDecode } from "jwt-decode";
-import EditDetails from "./EditDetails";
 
 function MyAccount() {
     const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
