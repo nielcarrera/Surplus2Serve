@@ -97,7 +97,23 @@ const login = async (req, res) => {
     }
 };
 
+const fetchUserDetail = async (req, res) => {
+    const { userId } = req.body; // Extract userId from the request body
+    console.log("User Id:", userId); // Check if userId is received correctly
+
+    // Call your model to find user details
+    userModel.findUserDetail(userId, (err, result) => {
+        if (err) return res.status(500).json({ message: err });
+        if (result.length === 0) { // Corrected to check if the result is empty
+            console.log("User not found");
+            return res.status(400).json({ message: 'User not found' });
+        }
+        console.log("Retrieved data: ", result[0]);
+        return res.status(200).json({ success: true, data: result[0] });
+    });
+};
 
 
 
-module.exports = { register, login };
+
+module.exports = { register, login, fetchUserDetail };

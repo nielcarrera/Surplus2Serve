@@ -62,8 +62,11 @@ function findUserRole(id){
     });
 }
 
+function findUserDetail(id, callback){
+    const query = `CALL GetUserDetails(?);`;
+    db.query(query, [id], callback);
+}
 
 
 
-
-module.exports = { findUserByUsername, createUser, findUserFullName, findUserRole};
+module.exports = { findUserByUsername, createUser, findUserFullName, findUserRole, findUserDetail};

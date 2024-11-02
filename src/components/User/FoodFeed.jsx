@@ -9,7 +9,6 @@ function FoodFeed() {
     const [scategory, setScategory] = useState('All');
     const [location, setLocation] = useState([]);
     const [slocation, setSlocation] = useState('All');
-    const [searchTerm, setSearchTerm] = useState('');
     const [filteredRequests, setFilteredRequests] = useState([]);
 
     useEffect(() => {
@@ -24,6 +23,9 @@ function FoodFeed() {
                 setCategory(categoryResponse.data);
                 setFood(foodResponse.data);
                 setLocation(locationResponse.data);
+                
+                // Set filtered requests based on the fetched food data
+                setFilteredRequests(foodResponse.data);
             } catch (err) {
                 console.error('Error fetching data:', err);
             }
@@ -33,16 +35,16 @@ function FoodFeed() {
     }, []);
 
     const handleSearch = () => {
-        const filtered = food.filter((food) => {
+        const filtered = food.filter((foodItem) => {
             const matchesSearchTerm = 
                 browseFood === '' || 
-                food.Foodname.toLowerCase().includes(browseFood.toLowerCase());
+                foodItem.Foodname.toLowerCase().includes(browseFood.toLowerCase());
             const matchesCategory = 
                 (scategory === 'All') ||
-                (scategory === food.CategoryName);
+                (scategory === foodItem.CategoryName);
             const matchesLocation = 
                 (slocation === 'All') || 
-                (slocation === food.location);
+                (slocation === foodItem.location);
 
             return matchesSearchTerm && matchesCategory && matchesLocation;
         });
@@ -50,9 +52,6 @@ function FoodFeed() {
         setFilteredRequests(filtered);
     };
 
-    React.useEffect(() => {
-        setFilteredRequests(food);
-    }, []);
     return (
         <main>
             <div className='Searchbar'>
@@ -88,13 +87,13 @@ function FoodFeed() {
                             <FoodCard
                                 key={index}
                                 name={request.Foodname}
-                                quantity={request.quantity} // Ensure this field is correct
-                                location={request.location} // Ensure this field is correct
+                                quantity={request.quantity}
+                                location={request.location}
                             />
                         ))
                     ) : (
                         <div className="no-results">
-                            Seems Empty
+                            No results.
                         </div>
                     )}
                 </div>    

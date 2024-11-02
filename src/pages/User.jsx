@@ -3,6 +3,8 @@ import '../components/Admin/Admin.css'
 import User from '../components/User/User';
 import Sidebar from '../components/User/Sidebar';
 import FoodFeed from '../components/User/FoodFeed';
+import MyAccount from '../components/User/MyAccount';
+
 function Userpage() {
 
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
@@ -18,8 +20,8 @@ function Userpage() {
         return <User />;
       case 'Food Feed':
         return <FoodFeed/>;
-      case 'ActivityLog':
-        return <ActivityLog />;
+      case 'My Account':
+        return <MyAccount/>;
       default:
         return <Admin />;
     }
