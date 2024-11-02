@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 01, 2024 at 03:31 PM
+-- Generation Time: Nov 02, 2024 at 07:23 AM
 -- Server version: 10.4.21-MariaDB
 -- PHP Version: 8.0.12
 
@@ -46,6 +46,27 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `CreateUser` (IN `p_username` VARCHA
     INSERT INTO userrole_tbl(userId, roleId)
     VALUES (user_id, 2);
     
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetUserDetails` (IN `userId` INT)  BEGIN
+    SELECT 
+        u.username,
+        ur.roleId,
+        r.roleName,
+        ul.locationId,
+        l.location
+    FROM 
+        user_tbl u 
+    JOIN
+        userrole_tbl ur ON ur.userId = u.userID
+    JOIN 
+        roles r ON r.roleId = ur.roleId
+    JOIN
+        userlocation_tbl ul ON ul.userId = u.userID
+    JOIN 
+        location l ON l.locationId = ul.locationId
+    WHERE
+        u.userID = userId;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `InsertPostedFood` (IN `foodOwnerId` INT, IN `foodName` VARCHAR(255), IN `postedFoodCategory` INT, IN `quantity` INT, IN `expiry_date` DATE, IN `availability` VARCHAR(10), IN `description` VARCHAR(255))  BEGIN
@@ -125,7 +146,8 @@ CREATE TABLE `postedfood_dtl` (
 INSERT INTO `postedfood_dtl` (`id`, `postedFoodId`, `postedFoodCategory`, `quantity`, `expiry_date`, `availability`, `description`) VALUES
 (1, 3, 2, 10, '2024-11-30', 'Yes', 'Pampagana'),
 (2, 4, 2, 10, '2024-11-30', 'Yes', 'Pampagana'),
-(3, 5, 2, 10, '2024-11-30', 'Yes', 'Pampagana');
+(3, 5, 2, 10, '2024-11-30', 'Yes', 'Pampagana'),
+(4, 6, 1, 10, '2024-11-01', 'Yes', 'Test 1');
 
 -- --------------------------------------------------------
 
@@ -149,7 +171,8 @@ INSERT INTO `postedfood_tbl` (`id`, `foodOwnerId`, `foodName`, `datePosted`) VAL
 (2, 7, 'Chocolate', '2024-11-01 00:00:00'),
 (3, 7, 'Sting na pula', '2024-11-01 19:08:44'),
 (4, 7, 'Sting na pula', '2024-11-01 19:13:34'),
-(5, 7, 'Sting na pula', '2024-11-01 22:27:20');
+(5, 7, 'Sting na pula', '2024-11-01 22:27:20'),
+(6, 7, 'Test 1', '2024-11-01 23:48:37');
 
 -- --------------------------------------------------------
 
@@ -355,13 +378,13 @@ ALTER TABLE `location`
 -- AUTO_INCREMENT for table `postedfood_dtl`
 --
 ALTER TABLE `postedfood_dtl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `postedfood_tbl`
 --
 ALTER TABLE `postedfood_tbl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `roles`
