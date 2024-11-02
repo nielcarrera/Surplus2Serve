@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ViewDetails from "./ViewDetails";
-import MyAccountSidebar from "./user-components/MyAccountSidebar";
+import PersonalDetails from "./PersonalDetails";
 import { jwtDecode } from "jwt-decode";
 import EditDetails from "./EditDetails";
 
@@ -35,29 +34,12 @@ function MyAccount() {
         }
     }, [token]); // Dependency on token
 
-    const OpenSidebar = () => {
-        setOpenSidebarToggle(!openSidebarToggle);
-    };
-
-    const renderContent = () => {
-        switch (activeTab) {
-            case 'Edit Details':
-                return <EditDetails />;
-            default:
-                return <ViewDetails 
-                    userId={userId}
-                    name = {name} />; // Pass userId as a prop
-        }
-    };
-
     return (
         <div className='grid-container'>
-            <MyAccountSidebar
-                openSidebarToggle={openSidebarToggle}
-                OpenSidebar={OpenSidebar}
-                setActiveTab={setActiveTab} // Pass the function to change the active tab
+            <PersonalDetails
+                userId={userId}
+                name={name}
             />
-            {renderContent()} {/* Render the active tab's content */}
         </div>
     );
 }

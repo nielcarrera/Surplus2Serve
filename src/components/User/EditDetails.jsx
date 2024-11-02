@@ -11,7 +11,7 @@ function EditDetails(){
             <div className="container">
                 this is edit details page
                 <form className="update-form" onSubmit={handleUpdate}>
-                    <input type="text" name="" id="" value="yournema"/>
+                    <input type="text" name="" id="" value="yourname"/>
                     <input type="submit" value="Update" />
                 </form>
             </div>

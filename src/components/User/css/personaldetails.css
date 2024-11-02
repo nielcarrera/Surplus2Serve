@@ -1,0 +1,41 @@
+.input-box{
+    display: flex;
+    flex-direction: column;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: 1px solid gray;
+}
+.input-box label{
+    font-size: .7rem;
+    font-weight: bold;
+}
+.input-box input{
+    all: unset;          
+    box-sizing: border-box; 
+    font-size: 1.5rem;
+}
+select {
+    appearance: none;        /* Removes default appearance */
+    -webkit-appearance: none; /* For Safari */
+    -moz-appearance: none;    /* For Firefox */
+    outline: none;            /* Removes the focus outline */
+    border: none;             /* Removes border */
+    box-shadow: none;         /* Removes any shadow effect */
+    background-color: transparent;
+    color: gray;
+    font-size: 1.3rem;
+}
+/* Remove blue border on focus in WebKit browsers (Chrome, Safari) */
+select:focus {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+/* Remove background or border styles when active */
+select:active {
+    outline: none;
+    border: none;
+    background: none; /* Customize as needed */
+    box-shadow: none;
+}

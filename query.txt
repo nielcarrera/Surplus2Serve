@@ -73,3 +73,13 @@ BEGIN
 END //
 
 DELIMITER ;
+
+CALL InsertPostedFood(
+    1,                        -- foodOwnerId
+    'Pizza',                  -- foodName
+    'Fast Food',              -- postedFoodCategory
+    10,                       -- quantity
+    '2024-12-31',             -- expiry_date
+    TRUE,                     -- availability
+    'Delicious pepperoni pizza' -- description
+);
