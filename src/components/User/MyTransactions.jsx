@@ -30,8 +30,14 @@ function MyTransactions({ userID }) {
     };
 
     // Handle sending a message
-    const handleSendMessage = (message) => {
-        console.log('Sending message:', message); // You can implement actual sending logic here
+    const handleSendMessage = async (messageData) => {
+        try {
+            const response = await axios.post('http://localhost:5000/api/sendMessage', messageData);
+            console.log('Message sent:', response.data);
+            fetchMessages(selectedConversation.conversation_id); // Fetch updated messages
+        } catch (err) {
+            console.error('Error sending message:', err);
+        }
     };
 
     return (
@@ -48,16 +54,17 @@ function MyTransactions({ userID }) {
                     <h1>Transaction Page</h1>
                     <p>Content related to transactions will go here.</p>
 
-                    {/* Chat Interface */}
+                    {/* Log selectedConversation for debugging */}
                     {selectedConversation ? (
-                        <ChatWindow // Use the new ChatWindow component
-                            selectedConversation={selectedConversation}
-                            messages={messages}
+                        <ChatWindow 
+                            selectedConversation={selectedConversation} 
+                            messages={messages} // Pass messages to ChatWindow
                             userID={userID}
-                            onSendMessage={handleSendMessage} // Pass the handler
+                            onSendMessage={handleSendMessage} // Pass the send message handler
+                            fetchMessages={fetchMessages} // Pass fetchMessages to ChatWindow
                         />
                     ) : (
-                        <p>Select a conversation to view messages.</p>
+                        <p>No conversation selected.</p>
                     )}
                 </div>
             </main>

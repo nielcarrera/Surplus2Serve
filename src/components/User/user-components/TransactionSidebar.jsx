@@ -21,7 +21,9 @@ function TransactionSidebar({ openSidebarToggle, OpenSidebar, userID, onConversa
                             food_id: item.food_id,
                             foodName: item.foodName,
                             owner_name: item.owner_name,
+                            owner_ID: item.owner_userID,
                             interested_user_name: item.interested_user_name,
+                            interested_id: item.interested_userID,
                             started_at: item.started_at,
                             messages: []
                         };
@@ -45,7 +47,6 @@ function TransactionSidebar({ openSidebarToggle, OpenSidebar, userID, onConversa
                 console.error('Error fetching conversations:', err);
             }
         };
-
         fetchConversations();
     }, [userID]);
 
@@ -67,15 +68,9 @@ function TransactionSidebar({ openSidebarToggle, OpenSidebar, userID, onConversa
                         <ConversationHeader 
                             foodName={conversation.foodName}
                             ownerName={conversation.owner_name}
-                            onClick={() => console.log('Header clicked!')}
-                            onMouseEnter={() => console.log('Mouse entered!')}
-                            onMouseLeave={() => console.log('Mouse left!')}
                         />
                     </div>
                 ))}
-                {/* {conversations.map((conversation, i) => (
-                    <div className="item" key={i}>{conversation.owner_name}</div>
-                ))} */}
             </div>
         </aside>
     );

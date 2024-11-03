@@ -33,4 +33,26 @@ const getMessagesForConversation = (req, res) => {
     });
 };
 
-module.exports = { fetchUserConversations,  getMessagesForConversation};
+// Controller to insert a new message
+const sendMessage = (req, res) => {
+    const { conversation_id, sender_id, receiver_id, message_text } = req.body; // Use the exact keys from the request body
+    console.log(req.body);
+
+    // Validate the input
+    if (!conversation_id || !sender_id || !receiver_id || !message_text) {
+        return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    conversationModel.insertMessage(conversation_id, sender_id, receiver_id, message_text, (err, result) => {
+        if (err) {
+            console.error('Error sending message:', err);
+            return res.status(500).json({ message: 'Internal Server Error' });
+        }
+
+        // Return the inserted message details as JSON
+        res.status(201).json(result);
+    });
+};
+
+
+module.exports = { fetchUserConversations,  getMessagesForConversation, sendMessage};

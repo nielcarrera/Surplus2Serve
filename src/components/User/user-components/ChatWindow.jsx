@@ -1,13 +1,29 @@
-// ChatWindow.jsx
 import React, { useState } from 'react';
 
 function ChatWindow({ selectedConversation, messages, userID, onSendMessage }) {
     const [newMessage, setNewMessage] = useState('');
 
-    const handleSendMessage = () => {
-        alert(`Message to send: ${newMessage}`);
-        onSendMessage(newMessage);
-        setNewMessage('');
+    console.log('Selected Conversation:', selectedConversation); // Debugging line
+
+    const handleSendMessage = async () => {
+        if (!newMessage.trim()) return; // Prevent sending empty messages
+
+        let receiver_id;
+        if (selectedConversation.interested_id !== userID) {
+            receiver_id = selectedConversation.interested_id;
+        } else {
+            receiver_id = selectedConversation.owner_ID;
+        }
+
+        const messageData = {
+            conversation_id: selectedConversation.conversation_id,
+            sender_id: userID,
+            receiver_id: receiver_id,
+            message_text: newMessage,
+        };
+
+        await onSendMessage(messageData);
+        setNewMessage(''); // Clear the input field after sending
     };
 
     return (
@@ -46,8 +62,9 @@ function ChatWindow({ selectedConversation, messages, userID, onSendMessage }) {
                     onChange={(e) => setNewMessage(e.target.value)}
                 />
                 <button
-                    className="ml-3 p-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+                    className={`ml-3 p-2 rounded-lg ${newMessage.trim() ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
                     onClick={handleSendMessage}
+                    disabled={!newMessage.trim()} // Disable if the message is empty
                 >
                     Send
                 </button>
