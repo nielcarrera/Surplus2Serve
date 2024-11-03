@@ -3,42 +3,53 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/userModel');
 
-const register = (req, res) => {
+const register = async (req, res) => {
     console.log("flag register");
     const { firstName, lastName, username, password, confirmPassword, location } = req.body;
+
+    // Check for missing fields
     if (!firstName || !lastName || !username || !password || !confirmPassword || !location) {
+        console.log("All fields required");
         return res.status(400).json({ message: 'All fields are required' });
     }
+
+    // Check if passwords match
     if (password !== confirmPassword) {
+        console.log("Passwords do not match");
         return res.status(400).json({ message: 'Passwords do not match' });
     }
 
-    userModel.findUserByUsername(username, (err, result) => {
-        console.log(username);
-        if (err) return res.status(500).json({ message: err });
-        if (result.length > 0) {
-            console.log("user exist");
+    try {
+        // Check if user already exists
+        const userExists = await userModel.findUserByUsername(username);
+        if (userExists.length > 0) {
+            console.log("User exists");
             return res.status(400).json({ message: 'User already exists' });
         }
 
-        bcrypt.hash(password, 10, (err, hashedPassword) => {
-            if (err) return res.status(500).json({ message: 'Error hashing password' });
-            userModel.createUser(username, hashedPassword, firstName, lastName, location, (err) => {
-                if (err) {
-                    console.error("MySQL error:", error);
-                    return res.status(500).json({
-                        success: false,
-                        message: "Internal server error",
-                        error: err.message, // For debugging; hide this in production
-                    });
-                }
-                res.status(200).json({
-                    success: true,
-                    message: 'User registered successfully' 
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create new user
+        userModel.createUser(username, hashedPassword, firstName, lastName, location, (err) => {
+            if (err) {
+                console.error("MySQL error:", err);
+                return res.status(500).json({
+                    success: false,
+                    message: "Internal server error",
+                    error: err.message, // For debugging; hide this in production
                 });
+            }
+            console.log("User registered");
+            res.status(200).json({
+                success: true,
+                message: 'User registered successfully'
             });
         });
-    });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Internal server error' });
+    }
 };
 
 const login = async (req, res) => {
