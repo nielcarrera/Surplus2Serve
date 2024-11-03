@@ -5,7 +5,7 @@ import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import Admin from './pages/Admin'
 import User from './pages/User'
-
+import './index.css';
 export default function App() {
    return (
     <div>

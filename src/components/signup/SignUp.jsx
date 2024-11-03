@@ -45,6 +45,7 @@ const handleChange = (e) => {
 
   const handleSignup = async (e) => {
       e.preventDefault();
+      console.log("interacted with signupbutton");
       try {
           const response = await axios.post('http://localhost:5000/auth/register', formData);
           console.log("flag try");
