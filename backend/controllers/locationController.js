@@ -48,8 +48,6 @@ const addLocation = (req, res) => {
     });
 };
 
-module.exports = { addLocation };
-
 const updateLocation = (req, res) => {
     const { locationID, location } = req.body;
   
