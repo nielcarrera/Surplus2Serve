@@ -17,7 +17,6 @@ function findUserByUsername(username) {
     });
 }
 
-
 function findUserFullName(id) {
     return new Promise((resolve, reject) => {
         const query = 'SELECT firstName, lastName FROM userdetails_tbl WHERE userId = ?';
@@ -67,6 +66,18 @@ function findUserDetail(id, callback){
     db.query(query, [id], callback);
 }
 
+// Function to update user's full name
+function updateUserProfile(userID, firstName, lastName) {
+    return new Promise((resolve, reject) => {
+        const query = 'UPDATE userdetails_tbl SET firstName = ?, lastName = ? WHERE userID = ?';
+        db.query(query, [firstName, lastName, userID], (error, results) => {
+            if (error) {
+                console.error('Error updating profile:', error);
+                return reject(error);
+            }
+            resolve(results);
+        });
+    });
+}
 
-
-module.exports = { findUserByUsername, createUser, findUserFullName, findUserRole, findUserDetail};
+module.exports = { findUserByUsername, createUser, findUserFullName, findUserRole, findUserDetail, updateUserProfile};

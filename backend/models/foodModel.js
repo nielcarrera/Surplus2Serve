@@ -5,6 +5,18 @@ const getAllFoodCategory = (callback) => {
     const query = 'SELECT * FROM foodcategory_tbl';
     db.query(query, callback);
 };
+const insertFoodCategory = (category, callback) => {
+    const query = 'INSERT INTO foodcategory_tbl(foodCategory) VALUES (?);';
+    db.query(query, [category], callback);
+};
+const updateFoodCategory = (id, category, callback) => {
+    const query = 'UPDATE foodcategory_tbl SET foodCategory = ? WHERE id = ?;';
+    db.query(query, [category, id], callback); // Correct query here
+  };
+const deleteFoodCategory = (id, callback) => {
+    const query = "DELETE FROM foodcategory_tbl WHERE id = ?;";
+    db.query(query, [id], callback);
+};  
 const getAllFood = (callback) => {
     const query = `
     SELECT 
@@ -19,7 +31,8 @@ const getAllFood = (callback) => {
         d.quantity,
         d.expiry_date,
         d.availability,
-        d.description
+        d.description,
+        s.status AS FoodStatus  -- Adding status from postedfood_status table
     FROM 
         postedfood_tbl p
     JOIN 
@@ -31,8 +44,23 @@ const getAllFood = (callback) => {
     JOIN 
         foodCategory_tbl fc ON d.postedFoodCategory = fc.id
     JOIN
-        location l ON ul.locationId = l.locationID;
+        location l ON ul.locationId = l.locationID
+    JOIN
+        postedfood_status s ON p.id = s.postedFoodId;  -- Joining postedfood_status table to fetch the status
+
 `;
     db.query(query, callback);
 }
-module.exports = { getAllFoodCategory, getAllFood };
+
+const updateFoodStatus = (id, status, callback) => {
+    const query = 'UPDATE postedfood_status SET `status` = ? WHERE `id` = ?';
+    db.query(query, [status, id], callback);
+  };
+
+module.exports = { 
+    getAllFoodCategory, 
+    getAllFood, 
+    updateFoodStatus, 
+    insertFoodCategory, 
+    updateFoodCategory,
+    deleteFoodCategory };

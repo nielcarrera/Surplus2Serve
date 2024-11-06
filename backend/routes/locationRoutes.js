@@ -8,13 +8,22 @@ const conversationController = require('../controllers/conversationController');
 
 
 router.get('/locations', locationController.getLocations);
+router.post('/add-location', locationController.addLocation);
+router.put('/updateLocation', locationController.updateLocation);
+router.delete('/delete-location/:locationID', locationController.deleteLocation);
 
 router.get('/category', foodController.getFoodCategory);
 router.get('/foodPosted', foodController.getFood);
+router.post('/insertCategory', foodController.insertFoodCategory);
+router.post('/updateCategory', foodController.updateFoodCategory);
+router.delete('/deleteCategory/:categoryId', foodController.deleteFoodCategory);
+
 
 router.get('/conversations/:userID', conversationController.fetchUserConversations);
 router.get('/messages/:conversationId', conversationController.getMessagesForConversation);
 
 router.post('/sendMessage', conversationController.sendMessage);
+// Update food status endpoint
+router.put('/update-food-status', foodController.updateFoodStatus);
 
 module.exports = router;

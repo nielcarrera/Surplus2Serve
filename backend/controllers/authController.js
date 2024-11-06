@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/userModel');
 
+
 const register = async (req, res) => {
     console.log("flag register");
     const { firstName, lastName, username, password, confirmPassword, location } = req.body;
@@ -60,7 +61,7 @@ const login = async (req, res) => {
     }
 
     try {
-        // Find user by username
+        // Step 1: Find user by username
         const result = await userModel.findUserByUsername(username);
         if (!result || result.length === 0) {
             return res.status(400).json({ message: 'User not found.' });
@@ -69,15 +70,31 @@ const login = async (req, res) => {
         const user = result[0];
         const id = user.userID;
 
-        // Compare password
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(400).json({ message: 'Invalid credentials' });
+        // Step 2: Fetch user role first
+        const userRole = await userModel.findUserRole(id);
+        if (!userRole) {
+            return res.status(404).json({ message: 'User role not found.' });
         }
 
-        console.log(`User ID for full name lookup: ${id}`); // Log user ID
+        console.log(`User role retrieved: ${userRole.roleId}`);
 
-        // Fetch user full name
+        // Step 3: Check if user is admin (role ID is 1) or regular user
+        if (userRole.roleId === 1) {
+            // Admin - Basic password verification
+            if (user.password !== password) {
+                return res.status(400).json({ message: 'Invalid admin credentials' });
+            }
+            console.log('Admin login successful.');
+        } else {
+            // Regular user - Verify password with bcrypt
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                return res.status(400).json({ message: 'Invalid credentials' });
+            }
+            console.log('User login with password verification successful.');
+        }
+
+        // Step 4: Fetch full name after successful role check or password verification
         const userFullName = await userModel.findUserFullName(id);
         if (!userFullName) {
             return res.status(404).json({ message: 'Full name not found.' });
@@ -86,15 +103,7 @@ const login = async (req, res) => {
         const fullName = `${userFullName.firstName} ${userFullName.lastName}`;
         console.log(`Full name retrieved: ${fullName}`);
 
-        // Fetch user role
-        const userRole = await userModel.findUserRole(id);
-        if (!userRole) {
-            return res.status(404).json({ message: 'User role not found.' });
-        }
-
-        console.log(`User role retrieved: ${userRole.roleId}`);
-
-        // Generate JWT including user role
+        // Step 5: Generate JWT including user role
         const token = jwt.sign(
             { id: id, name: fullName, role: userRole.roleId }, // Add role to the payload
             'secretkey',
@@ -103,7 +112,7 @@ const login = async (req, res) => {
 
         return res.status(200).json({ message: 'Login successful', token });
     } catch (err) {
-        console.error('Error during login:', err); // Log the error for debugging
+        console.error('Error during login:', err);
         return res.status(500).json({ message: 'Internal server error' });
     }
 };
@@ -124,7 +133,48 @@ const fetchUserDetail = async (req, res) => {
     });
 };
 
+const updateProfile = async (req, res) => {
+    const { userID, firstName, lastName} = req.body;
+
+    if (!userID || !firstName || !lastName) {
+        return res.status(400).json({ message: 'User ID and full name are required' });
+    }
+
+    try {
+        await userModel.updateUserProfile(userID, firstName, lastName);
+        res.status(200).json({ message: 'Profile updated successfully' });
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        res.status(500).json({ message: 'Error updating profile' });
+    }
+};
+
+// Controller for fetching the user's full name
+const getUserFullName = async (req, res) => {
+    const { userId } = req.body; // Expecting userId in the request body
+
+    // Check if userId is provided
+    if (!userId) {
+        return res.status(400).json({ message: 'User ID is required' });
+    }
+
+    try {
+        // Call the model function to fetch full name by userId
+        const user = await userModel.findUserFullName(userId);
+        
+        if (!user) {
+            // If no user found, send an error response
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // If user found, send the full name
+        const fullName = `${user.firstName} ${user.lastName}`;
+        res.status(200).json({ success: true, fullName });
+    } catch (error) {
+        console.error('Error fetching full name:', error);
+        res.status(500).json({ message: 'Error fetching user full name' });
+    }
+};
 
 
-
-module.exports = { register, login, fetchUserDetail };
+module.exports = { register, login, fetchUserDetail, updateProfile, getUserFullName };
