@@ -2,13 +2,15 @@ import React from 'react';
 
 function RequestRow({ request, handleStatus }) {
   const handleApproveClick = () => {
-    alert("Approve button clicked for:", request.foodId);
-    handleStatus(request.userId ,request.foodId, 'Approved');
+    console.log(request.userId);
+    // alert("Approve button clicked for:", request.foodId);
+    // handleStatus(request.userId ,request.foodId, 'Approved');
   };
 
   const handleDenyClick = () => {
-    alert("Deny button clicked for:", request.foodId);
-    handleStatus(request.userId ,request.foodId, 'Denied');
+    console.log(request.userId);
+    // alert("Deny button clicked for:", request.foodId);
+    // handleStatus(request.userId ,request.foodId, 'Denied');
   };
 
   return (

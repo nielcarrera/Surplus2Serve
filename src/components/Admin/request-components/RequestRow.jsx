@@ -18,13 +18,13 @@ function RequestRow({ request, handleStatus }) {
         ) : (
           <>
             <button
-              onClick={() => handleStatus(request.foodId, 'Approved')} // Pass foodId and Approved status
+              onClick={() => handleStatus(request.userId,request.foodId, 'Approved')} // Pass foodId and Approved status
               className="bg-green-500 hover:bg-green-600 text-white font-semibold py-1 px-3 rounded-md"
             >
               Approve
             </button>
             <button
-              onClick={() => handleStatus(request.foodId, 'Denied')} // Pass foodId and Denied status
+              onClick={() => handleStatus(request.userId,request.foodId, 'Denied')} // Pass foodId and Denied status
               className="bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-3 rounded-md"
             >
               Deny
