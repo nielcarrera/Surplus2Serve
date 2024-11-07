@@ -17,17 +17,11 @@ function Sidebar({ openSidebarToggle, OpenSidebar, setActiveTab }) {
         <li className='sidebar-list-item' onClick={() => setActiveTab('Requests')}>
           <BsFillArchiveFill className='icon'/> Food Post Request
         </li>
-        <li className='sidebar-list-item' onClick={() => setActiveTab('ActivityLog')}>
-          <BsFillGrid3X3GapFill className='icon'/> Activity Log
-        </li>
-        
         <li className='sidebar-list-item' onClick={() => setActiveTab('Settings')}>
           <BsPeopleFill className='icon'/> Settings
         </li>
-        <li className='sidebar-list-item'>
-        <a href="">
-        <BsListCheck className='icon'/> Notification
-        </a>
+        <li className='sidebar-list-item' onClick={() => setActiveTab('Notifications')}>
+        <BsListCheck className='icon'/> Notifications
         </li>
         </ul>
         </aside>

@@ -6,6 +6,7 @@ import SignUp from './pages/SignUp'
 import Admin from './pages/Admin'
 import User from './pages/User'
 import './index.css';
+import Requests from './components/Admin/Requests'
 export default function App() {
    return (
     <div>
@@ -17,8 +18,8 @@ export default function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/user" element={<User />} />
+          <Route path="/food-approval/:id" element={<Requests />} />
         </Routes> 
-
       </BrowserRouter>
 
     </div>

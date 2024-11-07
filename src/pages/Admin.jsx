@@ -6,6 +6,7 @@ import Requests from '../components/Admin/Requests';
 import Settings from '../components/Admin/Settings';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
+import Notifications from '../components/Admin/Notifications';
 
 function Adminpage() {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
@@ -68,6 +69,8 @@ function Adminpage() {
         return <ActivityLog />;
       case 'Settings':
         return <Settings userID={userID} fullName={username} />;
+      case 'Notifications':
+        return <Notifications/>
       default:
         return <Admin username={username} />;
     }

@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom'; // Import useParams
 import axios from 'axios';
 import SearchSection from './request-components/SearchSection';
 import RequestRow from './request-components/RequestRow';
 import Pagination from './request-components/Pagination';
 
 function Requests() {
+  // Retrieve the id from the URL using useParams
+  const { id } = useParams(); // id will be available if the URL matches '/food-approval/:id'
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [category, setCategory] = useState([]);
   const [scategory, setScategory] = useState('All');
@@ -58,7 +62,13 @@ function Requests() {
     setTotalPages(Math.ceil(filtered.length / itemsPerPage));
     setCurrentPage(1); // Reset to first page
   };
-
+  useEffect(() => {
+    if (id) {
+      setSearchTerm(id);
+      handleSearch(); // Call handleSearch only when `id` is available
+    }
+  }, [id]); // Dependency on `id` ensures it only runs when `id` changes
+  
   // Sorting function
   const sortData = (column) => {
     const direction = sortColumn === column && sortDirection === 'asc' ? 'desc' : 'asc'; // Toggle direction
@@ -94,32 +104,31 @@ function Requests() {
     currentPage * itemsPerPage
   );
 
-// Handle status change (approve/deny)
-const handleStatus = async (foodId, status) => {
-  try {
-    // Await the axios request to ensure it completes before proceeding
-    const response = await axios.put('http://localhost:5000/api/update-food-status', {
-      id: foodId,
-      status: status
-    });
+  // Handle status change (approve/deny)
+  const handleStatus = async (foodId, status) => {
+    try {
+      // Await the axios request to ensure it completes before proceeding
+      const response = await axios.put('http://localhost:5000/api/update-food-status', {
+        id: foodId,
+        status: status
+      });
 
-    // Handle the response
-    alert(`Request ${foodId} status updated to: ${status}`);
-    console.log(response);
+      // Handle the response
+      alert(`Request ${foodId} status updated to: ${status}`);
+      console.log(response);
 
-    // Update the filtered requests locally (simulating a backend update)
-    setFilteredRequests((prevRequests) =>
-      prevRequests.map((request) =>
-        request.foodId === foodId ? { ...request, FoodStatus: status } : request
-      )
-    );
-  } catch (err) {
-    // Handle any errors that occur during the API call
-    console.error("Error updating status:", err);
-    alert('There was an error updating the status. Please try again.');
-  }
-};
-
+      // Update the filtered requests locally (simulating a backend update)
+      setFilteredRequests((prevRequests) =>
+        prevRequests.map((request) =>
+          request.foodId === foodId ? { ...request, FoodStatus: status } : request
+        )
+      );
+    } catch (err) {
+      // Handle any errors that occur during the API call
+      console.error("Error updating status:", err);
+      alert('There was an error updating the status. Please try again.');
+    }
+  };
 
   // Render sorting icon based on direction
   const getSortIcon = (column) => {
@@ -131,6 +140,8 @@ const handleStatus = async (foodId, status) => {
     <main className="p-6 bg-gray-100 min-h-screen">
       <div className="text-left mb-6">
         <h3 className="text-2xl font-semibold text-gray-800">FOOD POST REQUESTS</h3>
+        {/* You can now use the `id` parameter */}
+        {id && <p>Food Approval ID: {id}</p>}
       </div>
 
       <SearchSection
