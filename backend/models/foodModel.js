@@ -109,6 +109,40 @@ function findUserDetail(id, callback){
     const query = `CALL GetUserDetails(?);`;
     db.query(query, [id], callback);
 }
+
+const updateFoodPosted = (
+    foodId, // The ID of the food post to be updated
+    foodOwnerId, // The owner ID (should be an INT)
+    foodName, // The food name (should be a VARCHAR)
+    postedFoodCategory, // The category ID (should be an INT)
+    quantity, // The quantity of the food post (should be an INT)
+    expiryDate, // The expiry date of the food post (should be a DATE)
+    availability, // Availability status (should be a VARCHAR)
+    description, // Description of the food post (should be a VARCHAR)
+    timestamp, // Timestamp for when the post was updated (should be a DATETIME)
+    predefinedStatus, // The predefined status of the post (should be a VARCHAR)
+    predefinedTransactStatus, // The predefined transaction status (should be a VARCHAR)
+    callback // Callback function to handle the result
+  ) => {
+    // The query string with placeholders for the parameters
+    const query = 'CALL UpdatePostedFood(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+  
+    // Execute the query with the provided parameters
+    db.query(query, [
+      foodId,               // foodId (the ID of the food post to update)
+      foodOwnerId,          // foodOwnerId (the ID of the food owner)
+      foodName,             // foodName (the updated name of the food)
+      postedFoodCategory,   // postedFoodCategory (the updated category of the food)
+      quantity,             // quantity (the updated quantity of the food)
+      expiryDate,           // expiryDate (the updated expiry date of the food)
+      availability,         // availability (the updated availability of the food)
+      description,          // description (the updated description of the food)
+      timestamp,            // timestamp (the time of the update)
+      predefinedStatus,     // predefinedStatus (the updated status of the food post)
+      predefinedTransactStatus // predefinedTransactStatus (the updated transaction status)
+    ], callback); // Execute the query and pass the results to the callback
+  };
+  
 module.exports = { 
     getAllFoodCategory, 
     getAllFood, 
@@ -120,4 +154,5 @@ module.exports = {
     deleteFoodCategory,
     insertFoodPosted,
     findUserDetail,
+    updateFoodPosted,
     getMyFoodPosts};

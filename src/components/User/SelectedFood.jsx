@@ -1,11 +1,23 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import React, { useState } from "react";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function SelectedFood() {
     const location = useLocation();
+    const navigate = useNavigate();
     const foodDetails = location.state; // The passed state will be available here
+    const [showAlert, setShowAlert] = useState(false);
+     // Method to show the success alert
+     const displaySuccessAlert = () => {
+        setShowAlert(true);
+
+        // Set timeout to hide the alert and navigate to another page after 3 seconds
+        setTimeout(() => {
+            setShowAlert(false); // Hide the alert
+            navigate('/user'); // Navigate to the specified page
+        }, 1000); // 3-second delay
+    };
 
     const token = localStorage.getItem('jwtToken'); // Retrieve the token
     // Function to decode the token
@@ -53,6 +65,7 @@ export default function SelectedFood() {
                 interestedId: sessionId
             });
             console.log(res.data);
+            displaySuccessAlert();
         }catch(err){
             console.error(err);
         }
@@ -111,6 +124,25 @@ export default function SelectedFood() {
                 <h3 className="text-xl font-semibold text-gray-800">Contact Information</h3>
                 <p className="text-gray-600 mt-2">For further inquiries, please contact the food owner through the form above.</p>
             </div>
+             {/* Conditional rendering of the alert */}
+             {showAlert && (
+                <div role="alert" className="alert alert-success mt-4 flex items-center space-x-2 p-4 bg-green-100 rounded-lg">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6 shrink-0 stroke-current text-green-600"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                    </svg>
+                    <span>Message sent successfully! Please check your transactions tab to see the conversation</span>
+                </div>
+            )}
         </div>
     );
 }
