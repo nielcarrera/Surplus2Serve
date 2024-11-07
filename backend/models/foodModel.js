@@ -78,6 +78,40 @@ const updateFoodStatus = (id, status, callback) => {
 const getFoodStats = (callback) => {
     const query = 'CALL GetFoodCounts;';
     db.query(query, callback);
+};
+
+const getMyFoodPosts = (userId, callback) => {
+    const query = `CALL GetFoodPostsByOwner(?);`;
+
+    db.query(query, [userId], callback);
+};
+const insertFoodPosted = (foodOwnerId, foodName, postedFoodCategory, quantity, expiryDate, availability, description, timestamp, predefinedStatus, predefinedTransactStatus, callback) => {
+    // The query string with placeholders for the parameters
+    const query = 'CALL InsertPostedFood(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+
+    // Execute the query with the provided parameters
+    db.query(query, [
+        foodOwnerId,        // foodOwnerId (should be an INT)
+        foodName,           // foodName (should be a VARCHAR)
+        postedFoodCategory, // postedFoodCategory (should be an INT - category ID)
+        quantity,           // quantity (should be an INT)
+        expiryDate,         // expiry_date (should be a DATE)
+        availability,       // availability (should be a VARCHAR, e.g., "Available")
+        description,        // description (should be a VARCHAR)
+        timestamp,          // timestamp (should be a DATETIME value)
+        predefinedStatus,   // predefinedStatus (should be a VARCHAR, e.g., "Pending for approval")
+        predefinedTransactStatus // predefinedTransactStatus (should be a VARCHAR, e.g., "Open")
+    ], callback);  // Execute and invoke the callback with results
+};
+
+module.exports = { insertFoodPosted };
+
+
+
+
+function findUserDetail(id, callback){
+    const query = `CALL GetUserDetails(?);`;
+    db.query(query, [id], callback);
 }
 module.exports = { 
     getAllFoodCategory, 
@@ -87,4 +121,7 @@ module.exports = {
     updateFoodStatus, 
     insertFoodCategory, 
     updateFoodCategory,
-    deleteFoodCategory };
+    deleteFoodCategory,
+    insertFoodPosted,
+    findUserDetail,
+    getMyFoodPosts};

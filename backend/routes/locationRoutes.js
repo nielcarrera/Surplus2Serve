@@ -15,6 +15,7 @@ router.get('/category', foodController.getFoodCategory);
 router.get('/categorystats' ,foodController.fetchCategoryStats);
 
 router.get('/foodPosted', foodController.getFood);
+router.post('/insertFood', foodController.createFoodPost);
 router.get('/foodStats', foodController.getFoodStats);
 
 
@@ -29,5 +30,9 @@ router.get('/messages/:conversationId', conversationController.getMessagesForCon
 router.post('/sendMessage', conversationController.sendMessage);
 // Update food status endpoint
 router.put('/update-food-status', foodController.updateFoodStatus);
+
+router.post('/fetchUser', foodController.fetchUserDetail);
+
+router.get('/fetchPosts/:userId', foodController.fetchFoodPosts);
 
 module.exports = router;

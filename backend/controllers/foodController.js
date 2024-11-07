@@ -16,6 +16,15 @@ const getFood = (req, res) => {
     });
 };
 
+const fetchFoodPosts = (req, res) => {
+  const { userId } = req.params; 
+  foodModel.getMyFoodPosts(userId, (err, results) => {
+    if (err) return res.status(500).json({ message: errorMessage});
+    res.json(results);
+});
+
+};
+
 const getFoodStats = (req, res) => {
   foodModel.getFoodStats((err, results) => {
     if (err) return res.status(500).json({ message: 'An error occurred' });
@@ -141,6 +150,95 @@ const deleteFoodCategory = (req, res) => {
       res.status(200).json({ message: 'Category deleted successfully', id: categoryId });
     });
 };
+
+
+
+// Create a new food post
+const createFoodPost = (req, res) => {
+  // Destructure fields from the request body
+  const { 
+    foodOwnerId, 
+    foodName, 
+    postedFoodCategory, 
+    quantity, 
+    expiryDate, 
+    availability, 
+    description 
+  } = req.body;
+
+  console.log(req.body);
+
+  // Validate required fields
+  if (!foodOwnerId || !foodName || !postedFoodCategory || !quantity || !expiryDate || !availability || !description) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  // Validate field types and values
+  if (typeof foodName !== 'string' || foodName.trim() === '') {
+    return res.status(400).json({ message: 'Food name must be a valid string' });
+  }
+
+  if (isNaN(quantity) || quantity <= 0) {
+    return res.status(400).json({ message: 'Quantity must be a positive number' });
+  }
+
+  if (isNaN(Date.parse(expiryDate))) {
+    return res.status(400).json({ message: 'Expiry date must be a valid date' });
+  }
+
+  if (typeof availability !== 'string' || !['Yes', 'No'].includes(availability)) {
+    return res.status(400).json({ message: 'Availability must be "Available" or "Not Available"' });
+  }
+
+  //Prepare the current timestamp
+  const timestamp = new Date();
+
+  // Default values for status
+  const predefinedStatus = "Pending for approval";
+  const predefinedTransactStatus = "Open";
+
+  // Call the model to insert the food post
+  foodModel.insertFoodPosted(
+    foodOwnerId,
+    foodName,
+    postedFoodCategory,
+    quantity,
+    expiryDate,
+    availability,
+    description,
+    timestamp,
+    predefinedStatus,
+    predefinedTransactStatus,
+    (err, results) => {
+      if (err) {
+        console.error("Error inserting food post:", err);
+        return res.status(500).json({ message: err.message || 'Error inserting food post' });
+      }
+
+      // If the insertion was successful, send a success message
+      return res.status(201).json({
+        message: 'Food post created successfully',
+        foodPostId: results.insertId, // assuming results.insertId contains the new post ID
+      });
+    }
+  );
+};
+
+const fetchUserDetail = async (req, res) => {
+  const { userId } = req.body; // Extract userId from the request body
+  console.log("User Id:", userId); // Check if userId is received correctly
+
+  // Call your model to find user details
+  foodModel.findUserDetail(userId, (err, result) => {
+      if (err) return res.status(500).json({ message: err });
+      if (result.length === 0) { // Corrected to check if the result is empty
+          console.log("User not found");
+          return res.status(400).json({ message: 'User not found' });
+      }
+      console.log("Retrieved data: ", result[0]);
+      return res.status(200).json({ success: true, data: result[0] });
+  });
+};
   
 
   
@@ -152,4 +250,7 @@ module.exports = {
   updateFoodStatus, 
   insertFoodCategory, 
   updateFoodCategory,
-  deleteFoodCategory };
+  deleteFoodCategory,
+  createFoodPost,
+  fetchUserDetail,
+  fetchFoodPosts };
