@@ -13,7 +13,12 @@ router.put('/updateLocation', locationController.updateLocation);
 router.delete('/delete-location/:locationID', locationController.deleteLocation);
 
 router.get('/category', foodController.getFoodCategory);
+router.get('/categorystats' ,foodController.fetchCategoryStats);
+
 router.get('/foodPosted', foodController.getFood);
+router.get('/foodStats', foodController.getFoodStats);
+
+
 router.post('/insertCategory', foodController.insertFoodCategory);
 router.post('/updateCategory', foodController.updateFoodCategory);
 router.delete('/deleteCategory/:categoryId', foodController.deleteFoodCategory);

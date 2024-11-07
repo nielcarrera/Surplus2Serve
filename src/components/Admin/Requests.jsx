@@ -94,6 +94,33 @@ function Requests() {
     currentPage * itemsPerPage
   );
 
+// Handle status change (approve/deny)
+const handleStatus = async (foodId, status) => {
+  try {
+    // Await the axios request to ensure it completes before proceeding
+    const response = await axios.put('http://localhost:5000/api/update-food-status', {
+      id: foodId,
+      status: status
+    });
+
+    // Handle the response
+    alert(`Request ${foodId} status updated to: ${status}`);
+    console.log(response);
+
+    // Update the filtered requests locally (simulating a backend update)
+    setFilteredRequests((prevRequests) =>
+      prevRequests.map((request) =>
+        request.foodId === foodId ? { ...request, FoodStatus: status } : request
+      )
+    );
+  } catch (err) {
+    // Handle any errors that occur during the API call
+    console.error("Error updating status:", err);
+    alert('There was an error updating the status. Please try again.');
+  }
+};
+
+
   // Render sorting icon based on direction
   const getSortIcon = (column) => {
     if (sortColumn !== column) return null;
@@ -149,7 +176,7 @@ function Requests() {
 
         {currentItems.length > 0 ? (
           currentItems.map((request, index) => (
-            <RequestRow key={index} request={request} handleStatus={() => {}} />
+            <RequestRow key={index} request={request} handleStatus={handleStatus} />
           ))
         ) : (
           <div className="p-4 text-center text-gray-500">No results</div>

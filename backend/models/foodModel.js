@@ -51,15 +51,39 @@ const getAllFood = (callback) => {
 `;
     db.query(query, callback);
 }
+const fetchCategoryStats = (callback) => {
+    const query = `
+    SELECT 
+        fct.id AS category_id,                  -- Get the ID of the food category
+        fct.foodCategory,                       -- Get the name of the food category
+        COUNT(CASE WHEN pfs.status = 'Approved' THEN 1 END) AS approved_count,  -- Count of approved requests
+        COUNT(CASE WHEN pfs.status = 'Denied' THEN 1 END) AS denied_count,      -- Count of denied requests
+        COUNT(pfs.id) AS total_count            -- Total requests (approved + denied)
+    FROM 
+        postedfood_dtl pfd
+    JOIN 
+        postedfood_status pfs ON pfd.postedFoodId = pfs.postedFoodId
+    JOIN 
+        foodcategory_tbl fct ON pfd.postedFoodCategory = fct.id
+    GROUP BY 
+        fct.id, fct.foodCategory;               -- Group by category ID and name
+`;
 
+    db.query(query,callback);
+}
 const updateFoodStatus = (id, status, callback) => {
     const query = 'UPDATE postedfood_status SET `status` = ? WHERE `id` = ?';
     db.query(query, [status, id], callback);
   };
-
+const getFoodStats = (callback) => {
+    const query = 'CALL GetFoodCounts;';
+    db.query(query, callback);
+}
 module.exports = { 
     getAllFoodCategory, 
     getAllFood, 
+    fetchCategoryStats,
+    getFoodStats,
     updateFoodStatus, 
     insertFoodCategory, 
     updateFoodCategory,

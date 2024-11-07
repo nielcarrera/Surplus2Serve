@@ -14,8 +14,21 @@ const getFood = (req, res) => {
         if (err) return res.status(500).json({ message: errorMessage});
         res.json(results);
     });
-}
+};
 
+const getFoodStats = (req, res) => {
+  foodModel.getFoodStats((err, results) => {
+    if (err) return res.status(500).json({ message: 'An error occurred' });
+    res.json(results);
+  });
+};
+
+const fetchCategoryStats = (req, res) => {
+  foodModel.fetchCategoryStats((err, results) => {
+    if (err) return res.status(500).json({ message: 'An error occurred' });
+    res.json(results);
+  });
+};
 const updateFoodStatus = (req, res) => {
     const { id, status } = req.body; // Get id and status from the request body
   
@@ -41,9 +54,9 @@ const updateFoodStatus = (req, res) => {
         return res.status(404).json({ message: 'Food status not found' });
       }
     });
-  };
+};
 
-  const insertFoodCategory = (req, res) => {
+const insertFoodCategory = (req, res) => {
     const { name } = req.body;
   
     // Validate category
@@ -72,9 +85,9 @@ const updateFoodStatus = (req, res) => {
         foodCategory: name // You can return the inserted category ID if needed
       });
     });
-  };
+};
 
-  const updateFoodCategory = (req, res) => {
+const updateFoodCategory = (req, res) => {
     const { category, categoryId } = req.body;
   
     // Check if category and categoryId are provided
@@ -100,9 +113,9 @@ const updateFoodStatus = (req, res) => {
       res.status(200).json({ id: categoryId, foodCategory: category });
     });
     
-  };
+};
   
-  const deleteFoodCategory = (req, res) => {
+const deleteFoodCategory = (req, res) => {
     // Get categoryId from the request parameters (from the URL)
     const { categoryId } = req.params;
     console.log('Received categoryId:', categoryId);  // Log to check if it's correctly received
@@ -127,13 +140,15 @@ const updateFoodStatus = (req, res) => {
       // Successfully deleted the category
       res.status(200).json({ message: 'Category deleted successfully', id: categoryId });
     });
-  };
+};
   
 
   
 module.exports = { 
   getFoodCategory, 
   getFood, 
+  fetchCategoryStats,
+  getFoodStats,
   updateFoodStatus, 
   insertFoodCategory, 
   updateFoodCategory,

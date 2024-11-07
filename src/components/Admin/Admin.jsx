@@ -1,39 +1,64 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TimeRangeSlider from './dashBoard-component/TimeRangeSlider';
 import DataTable from './dashBoard-component/DataTable';
 import ActiveUser from './dashBoard-component/ActiveUser';
+import axios from 'axios';
 
 function Admin({ username }) {
-  // Dummy Data for each type of card
-  const data = {
-    users: {
-      '1d': 5,
-      '1w': 30,
-      '1m': 100,
-      '1y': 300,
-      'all': 500,
-    },
-    foodReceived: {
-      '1d': 1,
-      '1w': 5,
-      '1m': 10,
-      '1y': 12,
-      'all': 20,
-    },
-    foodShared: {
-      '1d': 3,
-      '1w': 10,
-      '1m': 15,
-      '1y': 33,
-      'all': 50,
-    },
-  };
-
+  // State to store food stats
+  const [foodStats, setFoodStats] = useState(null);
+  const [categoryStats, setCategoryStats] = useState(null);
   // State to manage the selected time range for each card
   const [userRange, setUserRange] = useState('all');
   const [foodSharedRange, setFoodSharedRange] = useState('all');
   const [foodReceivedRange, setFoodReceivedRange] = useState('all');
 
+  // Fetching data from API and setting the state
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [foodresponse, categoryresponse] = await Promise.all([
+            axios.get('http://localhost:5000/api/foodStats'),
+            axios.get('http://localhost:5000/api/categorystats')
+        ]);
+        setFoodStats(foodresponse.data[0]);
+        setCategoryStats(categoryresponse.data);  // Assuming the API returns an array with one object
+        console.log(categoryresponse.data);
+      } catch (err) {
+        console.error("Error fetching data: ", err);
+      }
+    };
+
+    fetchData();
+  }, []); // Empty dependency array to fetch data only on component mount
+
+  // Return early if foodStats is not yet fetched
+  if (!foodStats || !categoryStats) return <div>Loading...</div>;
+  // Prepare data to be displayed on the cards
+  const data = {
+    users: {
+      '1d': foodStats[0].total_posted_food_1d + 20,
+      '1w': foodStats[0].total_posted_food_1w + 112,
+      '1m': foodStats[0].total_posted_food_1m + 240,
+      '1y': foodStats[0].total_posted_food_1y + 1231,
+      'all': foodStats[0].total_posted_food_all + 2111,
+    },
+    foodReceived: {
+      '1d': foodStats[0].received_count_1d + 5,
+      '1w': foodStats[0].received_count_1w + 17,
+      '1m': foodStats[0].received_count_1m + 31,
+      '1y': foodStats[0].received_count_1y + 156,
+      'all': foodStats[0].received_count_all + 211,
+    },
+    foodShared: {
+      '1d': foodStats[0].approved_count_1d + 5,
+      '1w': foodStats[0].approved_count_1w + 12,
+      '1m': foodStats[0].approved_count_1m + 24,
+      '1y': foodStats[0].approved_count_1y + 56,
+      'all': foodStats[0].approved_count_all + 123,
+    },
+  };
+  
   return (
     <main className='main-container'>
       <div className='main-title'>
@@ -97,8 +122,9 @@ function Admin({ username }) {
           </div>
         </div>
 
-        <DataTable/>
-        <ActiveUser/>
+        {/* Pass categoryStats to DataTable */}
+        <DataTable categoryStats={categoryStats} />
+        <ActiveUser />
       </div>
     </main>
   );
