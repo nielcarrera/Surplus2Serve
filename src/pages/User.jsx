@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 import { useEffect, useState } from 'react'
 import '../components/Admin/Admin.css'
 import User from '../components/User/User';
@@ -8,6 +7,8 @@ import MyAccount from '../components/User/MyAccount';
 import MyTransactions from '../components/User/MyTransactions';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
+import FoodPostingInsert from '../components/User/FoodPostingInsert';
+import Notifications from '../components/User/Notifications';
 
 function Userpage() {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
@@ -15,22 +16,6 @@ function Userpage() {
   const [username, setUsername] = useState('');
 
   const token = localStorage.getItem('jwtToken'); // Retrieve the token
-=======
-import { useState } from "react";
-import "../components/Admin/Admin.css";
-import User from "../components/User/User";
-import Sidebar from "../components/User/Sidebar";
-import FoodFeed from "../components/User/FoodFeed";
-import MySurplus from "../components/User/FoodPostingInsert";
-import MyAccount from "../components/User/MyAccount";
-import MyTransactions from "../components/User/MyTransactions";
-import { jwtDecode } from "jwt-decode";
-
-function Userpage() {
-  const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
-  const [activeTab, setActiveTab] = useState("Overview"); // Track active tab
-  const token = localStorage.getItem("jwtToken"); // Retrieve the token
->>>>>>> Stashed changes
   // Function to decode the token
   const decodeToken = (token) => {
     try {
@@ -41,27 +26,14 @@ function Userpage() {
       return null; // Return null if decoding fails
     }
   };
-<<<<<<< Updated upstream
   let id = '';
-=======
-  let username = "";
-  let id = "";
->>>>>>> Stashed changes
   // Usage
 
   if (token) {
-<<<<<<< Updated upstream
       const decodedPayload = decodeToken(token);
       console.log('Decoded Payload:', decodedPayload);
       id = decodedPayload.id;
       console.log("Fetching from: user page", username, id);
-=======
-    const decodedPayload = decodeToken(token);
-    console.log("Decoded Payload:", decodedPayload);
-    id = decodedPayload.id;
-    username = decodedPayload.name;
-    console.log("Fetching from: user page", username, id);
->>>>>>> Stashed changes
   } else {
     console.log("No token found.");
   }
@@ -87,27 +59,24 @@ function Userpage() {
 
   const renderContent = () => {
     switch (activeTab) {
-<<<<<<< Updated upstream
       case 'My Transactions':
         return <MyTransactions 
           userID={id}
         />;
       case 'Food Feed':
         return <FoodFeed/>;
+      case 'My Surplus':
+        return <FoodPostingInsert
+          id = {id}
+        />
       case 'My Account':
         return <MyAccount
           fullName = {username}
         />;
-=======
-      case "My Transactions":
-        return <MyTransactions userID={id} />;
-      case "Food Feed":
-        return <FoodFeed />;
-      case "My Surplus":
-        return <MySurplus id={id} />;
-      case "My Account":
-        return <MyAccount />;
->>>>>>> Stashed changes
+      case 'Notifications':
+        return <Notifications
+          userId = {id}
+        />
       default:
         return <User sessionName={username} />;
     }

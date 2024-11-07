@@ -18,7 +18,21 @@ const fetchNotificationsById = (req,res) => {
         }
     });
 };
+const insertNotificationById = (req,res) => {
+    const {id, type, message} = req.body;
 
+    if(!id || !type || !message){
+        return res.status(400).json({message: 'All fields required'});
+    }
+
+    notifModel.insertNotification(id,type,message, (err,result) => {
+        if(err) {
+            return res.status(500).json({message: 'Error inserting notification' + err})
+        }
+        return res.status(200).json({message: 'Notification Created Successfully'});
+    });
+};
 module.exports = {
-    fetchNotificationsById
+    fetchNotificationsById,
+    insertNotificationById
 }

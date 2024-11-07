@@ -26,6 +26,9 @@ function Sidebar({ openSidebarToggle, OpenSidebar, setActiveTab }) {
         <li className='sidebar-list-item' onClick={() => setActiveTab('My Account')}>
           <BsFillGrid3X3GapFill className='icon'/> My Account
         </li>
+        <li className='sidebar-list-item' onClick={() => setActiveTab('Notifications')}>
+          <BsFillGrid3X3GapFill className='icon'/> Notifications
+        </li>
         </ul>
         </aside>
   );

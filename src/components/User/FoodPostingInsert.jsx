@@ -27,28 +27,23 @@ function FoodPostingInsert({ id }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // const [categoryResponse, foodResponse] = await Promise.all([
-        //   axios.get("http://localhost:5000/api/category"),
-        //   axios.get(`http://localhost:5000/api/fetchPosts/${id}`),
-        // ]);
-        const categoryResponse = await axios.get(
-          "http://localhost:5000/api/category",
-        );
-        const foodResponse = await axios.get(
-          `http://localhost:5000/api/fetchPosts/${id}`,
-        );
-
+        const categoryResponse = await axios.get("http://localhost:5000/api/category");
+        const foodResponse = await axios.get(`http://localhost:5000/api/fetchPosts/${id}`);
+  
         setCategory(categoryResponse.data);
         setFetchPosts(foodResponse.data);
-        console.log(foodResponse.data);
+        
+        // Set filteredRequests here after data is fetched
         setFilteredRequests(foodResponse.data);
-        console.log("Filtered: ", filteredRequests);
+  
+        console.log("Filtered Requests: ", foodResponse.data); // Log the fetched data
       } catch (err) {
-        console.error("Error fetching categories", err);
+        console.error("Error fetching categories or food posts:", err);
       }
     };
+  
     fetchData();
-  }, []); // Dependency array to prevent re-fetching
+  }, [id]); // Add 'id' as a dependency if the `id` might change over time  
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -160,20 +155,24 @@ function FoodPostingInsert({ id }) {
         </div>
       </div>
 
-      <div className="=food-list">
-        {filteredRequests[0].length > 0 ? (
+      <div className="food-list">
+        {/* Fix the condition to handle filteredRequests correctly */}
+        {filteredRequests.length > 0 ? (
           filteredRequests[0].map((request, index) => (
-            <FoodCard
-              key={index}
-              id={request.foodId}
-              name={request.Foodname}
-              quantity={request.quantity}
-              location={request.location}
-            />
+            // Only render FoodCard if foodStatus is not 'pending for approval'
+            request.FoodStatus !== 'Pending for approval' && (
+              <FoodCard
+                key={index}
+                name={request.Foodname}
+                quantity={request.quantity}
+                location={request.location}
+              />
+            )
           ))
         ) : (
           <div className="no-results">No results.</div>
         )}
+
       </div>
     </main>
   );

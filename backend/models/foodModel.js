@@ -20,6 +20,7 @@ const deleteFoodCategory = (id, callback) => {
 const getAllFood = (callback) => {
     const query = `
     SELECT 
+        ud.userId,
         p.id AS foodId,
         CONCAT(ud.firstName, ' ', ud.lastName) AS Name,
         l.location,
@@ -103,11 +104,6 @@ const insertFoodPosted = (foodOwnerId, foodName, postedFoodCategory, quantity, e
         predefinedTransactStatus // predefinedTransactStatus (should be a VARCHAR, e.g., "Open")
     ], callback);  // Execute and invoke the callback with results
 };
-
-module.exports = { insertFoodPosted };
-
-
-
 
 function findUserDetail(id, callback){
     const query = `CALL GetUserDetails(?);`;

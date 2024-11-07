@@ -38,7 +38,7 @@ function Requests() {
         setCategory(categoryResponse.data);
         setFood(foodResponse.data);
         setLocation(locationResponse.data);
-
+        console.log(foodResponse.data);
         setFilteredRequests(foodResponse.data);
         setTotalPages(Math.ceil(foodResponse.data.length / itemsPerPage));
       } catch (err) {
@@ -105,10 +105,11 @@ function Requests() {
   );
 
   // Handle status change (approve/deny)
-  const handleStatus = async (foodId, status) => {
+  const handleStatus = async (ownerId ,foodId, status) => {
     try {
       // Await the axios request to ensure it completes before proceeding
       const response = await axios.put('http://localhost:5000/api/update-food-status', {
+        ownerId: ownerId,
         id: foodId,
         status: status
       });

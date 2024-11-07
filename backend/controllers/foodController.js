@@ -1,6 +1,12 @@
 const foodModel = require('../models/foodModel');
+const notificationModel = require('../models/notificationModel');
+const userModel = require('../models/userModel');
 
 const errorMessage = "Internal Server Error";
+
+const adminId = 2;
+const notifType = 'request';
+const messageSuffix = 'sent a food request.';
 
 const getFoodCategory = (req, res) => {
     foodModel.getAllFoodCategory((err, results) => {
@@ -39,30 +45,43 @@ const fetchCategoryStats = (req, res) => {
   });
 };
 const updateFoodStatus = (req, res) => {
-    const { id, status } = req.body; // Get id and status from the request body
+    const { ownerId, id, status } = req.body; // Get id and status from the request body
   
     // Validate input
     if (!id || !status) {
       return res.status(400).json({ message: 'ID and status are required' });
     }
-  
-    // Call the model to update the food status
-    foodModel.updateFoodStatus(id, status, (err, result) => {
-      if (err) {
-        return res.status(500).json({ message: 'Error updating food status' });
-      }
-      
-      // Check if any rows were affected
-      if (result.affectedRows > 0) {
-        return res.status(200).json({ 
-            message: `Food status updated successfully to ${status}`,
-            updatedStatus: status // Include the updated status in the response
-          });
+    try{
+      // Call your model to find user details
+        foodModel.updateFoodStatus(id, status, (err, result) => {
+          if (err) {
+            return res.status(500).json({ message: 'Error updating food status' });
+          }
           
-    } else {
-        return res.status(404).json({ message: 'Food status not found' });
-      }
-    });
+          // Check if any rows were affected
+          if (result.affectedRows > 0) {
+             // Insert the notification after image details are stored
+            const message = `Your food with the id ${id}, was ${status}`;
+            notificationModel.insertNotification(ownerId, status, message, (error, results) => {
+              if (error) {
+                  console.error("Database insertion error:", error);
+                  return res.status(500).json({ message: "Failed to generate notification for verification." });
+              }
+
+              // If the insertion was successful, send a success message
+              console.log("Food status updated!");
+              return res.status(201).json({
+                message: 'Food status updated successfully',
+              });
+            });
+        } else {
+            return res.status(404).json({ message: 'Food status not found' });
+          }
+        });
+    }catch(error){
+
+    }
+    
 };
 
 const insertFoodCategory = (req, res) => {
@@ -154,7 +173,7 @@ const deleteFoodCategory = (req, res) => {
 
 
 // Create a new food post
-const createFoodPost = (req, res) => {
+const createFoodPost = async(req, res) => {
   // Destructure fields from the request body
   const { 
     foodOwnerId, 
@@ -196,32 +215,54 @@ const createFoodPost = (req, res) => {
   // Default values for status
   const predefinedStatus = "Pending for approval";
   const predefinedTransactStatus = "Open";
-
-  // Call the model to insert the food post
-  foodModel.insertFoodPosted(
-    foodOwnerId,
-    foodName,
-    postedFoodCategory,
-    quantity,
-    expiryDate,
-    availability,
-    description,
-    timestamp,
-    predefinedStatus,
-    predefinedTransactStatus,
-    (err, results) => {
-      if (err) {
-        console.error("Error inserting food post:", err);
-        return res.status(500).json({ message: err.message || 'Error inserting food post' });
-      }
-
-      // If the insertion was successful, send a success message
-      return res.status(201).json({
-        message: 'Food post created successfully',
-        foodPostId: results.insertId, // assuming results.insertId contains the new post ID
-      });
+  try{
+    // Fetch user's full name based on userID
+    const userFullName = await userModel.findUserFullName(foodOwnerId);
+    if (!userFullName) {
+        return res.status(400).json({ message: 'Name not found on image controller' });
     }
-  );
+
+    // Construct the message using user's full name and suffix
+    const fullName = `${userFullName.firstName} ${userFullName.lastName}`;
+    const message = `${fullName} ${messageSuffix}`;
+      // Call the model to insert the food post
+    foodModel.insertFoodPosted(
+      foodOwnerId,
+      foodName,
+      postedFoodCategory,
+      quantity,
+      expiryDate,
+      availability,
+      description,
+      timestamp,
+      predefinedStatus,
+      predefinedTransactStatus,
+      (err, results) => {
+        if (err) {
+          console.error("Error inserting food post:", err);
+          return res.status(500).json({ message: err.message || 'Error inserting food post' });
+        }
+        // Insert the notification after image details are stored
+        notificationModel.insertNotification(adminId, notifType, message, (error, results) => {
+          if (error) {
+              console.error("Database insertion error:", error);
+              return res.status(500).json({ message: "Failed to generate notification for verification." });
+          }
+
+          // If the insertion was successful, send a success message
+          console.log("Food post created!");
+          return res.status(201).json({
+            message: 'Food post created successfully',
+            foodPostId: results.insertId, // assuming results.insertId contains the new post ID
+          });
+        });
+        
+      }
+    );
+  }catch(error){
+    console.error("Unexpected error:", error);
+    res.status(500).json({ message: "An unexpected error occurred." });
+  }
 };
 
 const fetchUserDetail = async (req, res) => {

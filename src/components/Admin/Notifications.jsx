@@ -3,7 +3,8 @@ import axios from 'axios';
 import ApprovalModal from "./request-components/ApprovalModal"; // Import the Approval Modal
 
 export default function Notifications({ userId }) {
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState([]); // This will store filtered notifications
+  const [allNotifications, setAllNotifications] = useState([]); // This will store all notifications
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentFoodId, setCurrentFoodId] = useState(null);
   const [loading, setLoading] = useState(true); // Loading state
@@ -13,7 +14,8 @@ export default function Notifications({ userId }) {
   const fetchData = async () => {
     try {
       const notificationResponse = await axios.get(`http://localhost:5000/notifications/fetchUserNotifs/${userId}`);
-      setNotifications(notificationResponse.data);
+      setAllNotifications(notificationResponse.data); // Store all notifications
+      setNotifications(notificationResponse.data); // Initialize the notifications state with all notifications
       setLoading(false);
     } catch (err) {
       console.error("Error fetching notifications:", err);
@@ -42,10 +44,10 @@ export default function Notifications({ userId }) {
   // Sorting and filtering handlers
   const handleSort = (type) => {
     if (type === "All") {
-      fetchData(); // Refetch all notifications to reset filter
+      setNotifications(allNotifications); // Reset to all notifications
     } else {
-      const filtered = notifications.filter((notification) => notification.type === type);
-      setNotifications(filtered);
+      const filtered = allNotifications.filter((notification) => notification.type === type);
+      setNotifications(filtered); // Update state with filtered notifications
     }
   };
 
@@ -112,13 +114,13 @@ export default function Notifications({ userId }) {
           View All
         </button>
         <button
-          onClick={() => handleSort("Verification Requests")}
+          onClick={() => handleSort("verification")}
           className="btn py-2 px-6 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition duration-200 ease-in-out shadow-md"
         >
           Verification Requests
         </button>
         <button
-          onClick={() => handleSort("Food Approvals")}
+          onClick={() => handleSort("request")}
           className="btn py-2 px-6 bg-yellow-600 hover:bg-yellow-700 text-white font-medium rounded-lg transition duration-200 ease-in-out shadow-md"
         >
           Food Approvals
@@ -126,36 +128,36 @@ export default function Notifications({ userId }) {
       </div>
 
       <div className="notifications-container space-y-4">
-      {notifications.length > 0 ? (
-        notifications.map((notification) => (
-          <div key={notification.notificationID} className="nc-card p-4 bg-white shadow-lg rounded-lg hover:shadow-xl transition duration-200 ease-in-out transform hover:scale-105">
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex items-center space-x-2">
-                <div
-                  className={`w-3 h-3 rounded-full ${notification.type === "Verification Requests" ? "bg-blue-500" : "bg-yellow-500"}`}
-                />
-                <span className="text-lg font-medium text-gray-700">{notification.message}</span>
+        {notifications.length > 0 ? (
+          notifications.map((notification) => (
+            <div key={notification.notificationID} className="nc-card p-4 bg-white shadow-lg rounded-lg hover:shadow-xl transition duration-200 ease-in-out transform hover:scale-105">
+              <div className="flex justify-between items-center mb-4">
+                <div className="flex items-center space-x-2">
+                  <div
+                    className={`w-3 h-3 rounded-full ${notification.type === "verification" ? "bg-blue-500" : "bg-yellow-500"}`}
+                  />
+                  <span className="text-lg font-medium text-gray-700">{notification.message}</span>
+                </div>
+              </div>
+              <div className="text-xs text-gray-500 mb-2">
+                {notification.foodId && (
+                  <span
+                    className="cursor-pointer text-blue-600 hover:underline"
+                    onClick={() => openModal(notification.foodId)}
+                  >
+                    Food ID: {notification.foodId}
+                  </span>
+                )}
+                {notification.verificationId && <span>Verification Request ID: {notification.verificationId}</span>}
+              </div>
+              <div className="flex justify-between items-center mt-4">
+                <span className="text-xs text-gray-500">{formatDate(notification.createdAt)}</span>
               </div>
             </div>
-            <div className="text-xs text-gray-500 mb-2">
-              {notification.foodId && (
-                <span
-                  className="cursor-pointer text-blue-600 hover:underline"
-                  onClick={() => openModal(notification.foodId)}
-                >
-                  Food ID: {notification.foodId}
-                </span>
-              )}
-              {notification.verificationId && <span>Verification Request ID: {notification.verificationId}</span>}
-            </div>
-            <div className="flex justify-between items-center mt-4">
-              <span className="text-xs text-gray-500">{formatDate(notification.createdAt)}</span>
-            </div>
-          </div>
-        ))
-      ) : (
-        <p>No notifications available.</p>
-      )}
+          ))
+        ) : (
+          <p>No notifications available.</p>
+        )}
       </div>
 
       <ApprovalModal

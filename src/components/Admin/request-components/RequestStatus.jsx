@@ -3,12 +3,12 @@ import React from 'react';
 function RequestRow({ request, handleStatus }) {
   const handleApproveClick = () => {
     alert("Approve button clicked for:", request.foodId);
-    handleStatus(request.foodId, 'Approved');
+    handleStatus(request.userId ,request.foodId, 'Approved');
   };
 
   const handleDenyClick = () => {
     alert("Deny button clicked for:", request.foodId);
-    handleStatus(request.foodId, 'Denied');
+    handleStatus(request.userId ,request.foodId, 'Denied');
   };
 
   return (
