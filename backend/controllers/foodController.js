@@ -273,7 +273,18 @@ const fetchUserDetail = async (req, res) => {
       return res.status(200).json({ success: true, data: result[0] });
   });
 };
-  
+const updatePostedFood = async (req,res) => {
+  const {foodOwnerId, 
+    foodName, 
+    postedFoodCategory, 
+    quantity, 
+    expiryDate, 
+    availability, 
+    description,
+    predefinedStatus, 
+    predefinedTransactStatus} = req.body;
+
+}
 
   
 module.exports = { 
