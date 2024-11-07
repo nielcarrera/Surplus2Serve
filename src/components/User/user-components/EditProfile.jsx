@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-function EditProfile({ userID, initialFullName }) {
-  const [fullName, setFullName] = useState(initialFullName);
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+function EditProfile({ userID, initialFullName, onNameChange }) {
+  const [firstName, setFirstName] = useState(''); // First name state
+  const [lastName, setLastName] = useState(''); // Last name state
 
-  // Split fullName into first and last names if fullName exists
   useEffect(() => {
-    if (fullName) {
-      const parts = fullName.split(' ');
-      setFirstName(parts[0] || ''); // First name
-      setLastName(parts[1] || '');  // Last name (if available)
+    if (initialFullName) {
+      const parts = initialFullName.split(' ');
+      setFirstName(parts[0] || ''); // Set first name
+      setLastName(parts[1] || '');  // Set last name
     }
-  }, [fullName]);
+  }, [initialFullName]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,8 +20,10 @@ function EditProfile({ userID, initialFullName }) {
       await axios.put('http://localhost:5000/auth/update-profile', { 
         userID: userID, 
         firstName: firstName, 
-        lastName: lastName });
+        lastName: lastName 
+      });
       alert('Profile updated successfully');
+      onNameChange(`${firstName} ${lastName}`);  // Notify parent component with updated name
     } catch (error) {
       console.error('Error updating profile:', error);
       alert('Error updating profile');
@@ -32,8 +32,6 @@ function EditProfile({ userID, initialFullName }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto">
-      <input type="hidden" name="id" value={userID} />
-
       <div className="flex gap-4">
         <div className="w-1/2">
           <label htmlFor="firstName" className="block text-gray-700 font-medium mb-1">

@@ -2,13 +2,11 @@ import React, { useEffect, useState } from "react";
 import PersonalDetails from "./PersonalDetails";
 import { jwtDecode } from "jwt-decode";
 
-function MyAccount() {
+function MyAccount({fullName}) {
     const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
     const [activeTab, setActiveTab] = useState('User Details');
-    const [name, setName] = useState('');
     const [userId, setUserId] = useState(''); // Use state for userId
     const token = localStorage.getItem('jwtToken'); // Retrieve the token
-
     // Function to decode the token
     const decodeToken = (token) => {
         try {
@@ -23,21 +21,21 @@ function MyAccount() {
     useEffect(() => {
         if (token) {
             const decodedPayload = decodeToken(token);
+            
             if (decodedPayload) {
                 console.log(decodedPayload);
                 setUserId(decodedPayload.id); // Set userId state
-                setName(decodedPayload.name); // Set the name state
             }
         } else {
             console.log('No token found.');
         }
-    }, [token]); // Dependency on token
+    }, [token]); // Only depend on `token` to decode it
 
     return (
         <div className='grid-container'>
             <PersonalDetails
                 userId={userId}
-                name={name}
+                name={fullName}
             />
         </div>
     );

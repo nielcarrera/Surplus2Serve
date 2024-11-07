@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import './css/Modal.css'; // Ensure you have the styles in this file
+import axios from 'axios';
 
-const ImageUploadModal = ({ isOpen, onClose }) => {
+const ImageUploadModal = ({ isOpen, onClose, userID, imageFile}) => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [imagePreview, setImagePreview] = useState('');
     const [error, setError] = useState('');
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
+        console.log(file);
         if (file && file.type.startsWith('image/')) {
             setSelectedFile(file);
             setError('');
@@ -25,15 +27,39 @@ const ImageUploadModal = ({ isOpen, onClose }) => {
         }
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
+    
         if (selectedFile) {
-            // Handle the image submission (e.g., send to server)
-            console.log('Submitting file:', selectedFile);
-            onClose(); // Close the modal after submission
+            const formData = new FormData();
+            formData.append("userID", userID);  // Add user ID to FormData
+            formData.append("attachmentLocation", selectedFile);  // Add file to FormData
+    
+            // Log the content of FormData for debugging
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ": " + pair[1]);
+            }
+    
+            try {
+                // Send the formData to the server using axios
+                const response = await axios.post("http://localhost:5000/images/insertImage", formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data"  // Axios handles this automatically, but can be explicitly specified
+                    }
+                });
+                console.log("Image uploaded successfully:", response.data);
+                alert('Image uploaded successfully');
+            } catch (error) {
+                // Handle errors during the upload
+                console.error("Error uploading image:", error);
+                alert('Error uploading image');
+            }
+        } else {
+            // Alert if no file is selected
+            alert("Please select an image first.");
         }
-    };
-
+    };    
+    
     if (!isOpen) return null;
 
     return (

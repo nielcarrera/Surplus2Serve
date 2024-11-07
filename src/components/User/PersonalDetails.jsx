@@ -1,35 +1,37 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import ImageUploadModal from "./ImageUploadModal";
+import EditProfile from "./user-components/EditProfile";
 
 function PersonalDetails({ userId, name }) {
     const [userData, setUserData] = useState([]);
     const [location, setLocation] = useState([]);
     const [sloc, setSloc] = useState('');
     const [isModalOpen, setModalOpen] = useState(false);
-    const [firstname, lastname] = name.split(" ");
+    const [imageFile, setImageFile] = useState();
     const [username, setUsername] = useState('');
+    const [updatedName, setUpdatedName] = useState(name);  // Store the updated name here
     const [formData, setFormData] = useState({
         firstname: '',
         lastname: '',
         username: '',
         location: ''
     });
+    const [isImageUploadModalOpen, setImageUploadModalOpen] = useState(false);
 
     useEffect(() => {
-        const fetchdata = async () => {
+        const fetchData = async () => {
             if (!userId) return;
             try {
                 const [dataResponse, locationResponse] = await Promise.all([
                     axios.post('http://localhost:5000/auth/fetchUser', { userId }),
                     axios.get('http://localhost:5000/api/locations')
                 ]);
-    
+
                 setLocation(locationResponse.data);
                 const fetchedUserData = dataResponse.data.data;
-    
+
                 setUserData(fetchedUserData);
-    
                 if (fetchedUserData.length > 0) {
                     setUsername(fetchedUserData[0].username);
                     setSloc(fetchedUserData[0].location);
@@ -38,46 +40,41 @@ function PersonalDetails({ userId, name }) {
                 console.error("Error fetching data:", err);
             }
         };
-    
-        fetchdata();
+
+        fetchData();
     }, [userId]);
 
-    const callSelect = () => (
-        <div className="input-box">
-            <label>SELECT A LOCATION</label>
-            <select 
-                value={sloc} 
-                onChange={(e) => setSloc(e.target.value)}
-                className="border border-gray-300 rounded px-3 py-2 mt-1"
-            >
-                <option value="All">All</option>
-                {location.map(loc => (
-                    <option key={loc.id} value={loc.id}>{loc.location}</option>
-                ))}
-            </select>
-        </div>
-    );
-    
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value
-        }));
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        setImageFile(file);
     };
-    
-    const handleSubmit = (formName) => (e) => {
-        e.preventDefault();
-        switch (formName) {
-            case 'detailForm':
-                console.log('Submitting Detail Form:', formData.firstname, formData.lastname, formData.location);
-                break;
-            case 'usernameForm':
-                console.log('Changing Username:', formData.username);
-                break;
-            default:
-                break;
+
+    const handleUploadImage = async () => {
+        if (!imageFile) {
+            alert("Please select an image file first.");
+            return;
         }
+
+        const formData = new FormData();
+        formData.append("userID", userId);
+        formData.append("attachmentLocation", imageFile);
+
+        try {
+            const response = await axios.post("http://localhost:5000/api/uploadImage", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            });
+            alert('Image uploaded successfully');
+        } catch (error) {
+            console.error("Error uploading image:", error);
+            alert('Error uploading image');
+        }
+    };
+
+    // Handle the update of name
+    const handleNameChange = (newName) => {
+        setUpdatedName(newName);  // Update the name in parent state
     };
 
     return (
@@ -85,22 +82,11 @@ function PersonalDetails({ userId, name }) {
             <div className="container mx-auto p-4">
                 <div className="cardContainer mb-4">
                     <label htmlFor="detailForm" className="font-bold text-lg">Personal Information</label>
-                    <form name="detailForm" onSubmit={handleSubmit('detailForm')}>
-                        <div className="input-container mb-4">
-                            <div className="input-box">
-                                <label htmlFor="fName" className="block font-medium">FIRST NAME</label>
-                                <input type="text" name="fName" value={firstname} className="border border-gray-300 rounded px-3 py-2 w-full mt-1" />
-                            </div>
-                            <div className="input-box">
-                                <label htmlFor="LName" className="block font-medium">LAST NAME</label>
-                                <input type="text" name="LName" value={lastname} className="border border-gray-300 rounded px-3 py-2 w-full mt-1" />
-                            </div>
-                            {callSelect()}
-                        </div>
-                        <button type="submit" className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">
-                            Save Changes
-                        </button>
-                    </form>
+                    <EditProfile 
+                        userID={userId}
+                        initialFullName={name} // Pass updated name as prop
+                        onNameChange={handleNameChange} // Send the handler to update name
+                    />
                 </div>
                 <div className="cardContainer mb-4">
                     <span className="font-bold text-lg">Account Status</span>
@@ -112,10 +98,20 @@ function PersonalDetails({ userId, name }) {
                         ) : (
                             <div className="mt-2">
                                 <span>Verified: No </span>
-                                <button onClick={() => { setModalOpen(true); }} className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 mt-2">
+                                <button
+                                    onClick={() => { setImageUploadModalOpen(true); }}
+                                    className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 mt-2"
+                                >
                                     Verify Now
                                 </button>
-                                <ImageUploadModal isOpen={isModalOpen} onClose={() => { setModalOpen(false); }} />
+                                <ImageUploadModal 
+                                    isOpen={isImageUploadModalOpen} 
+                                    onClose={() => setImageUploadModalOpen(false)}
+                                    userID={userId}
+                                    imageFile={imageFile}
+                                    onImageChange={handleImageChange}
+                                    onUpload={handleUploadImage}
+                                />
                             </div>
                         )
                     ) : (
@@ -123,12 +119,23 @@ function PersonalDetails({ userId, name }) {
                     )}
                 </div>
                 <div className="cardContainer mb-4">
-                    <form onSubmit={handleSubmit('usernameForm')}>
+                    <form onSubmit={(e) => {
+                        e.preventDefault();
+                        console.log("Changing Username:", username);
+                    }}>
                         <div className="input-box">
                             <label htmlFor="username" className="block font-medium">USERNAME</label>
-                            <input type="text" value={username} className="border border-gray-300 rounded px-3 py-2 w-full mt-1" />
+                            <input
+                                type="text"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                className="border border-gray-300 rounded px-3 py-2 w-full mt-1"
+                            />
                         </div>
-                        <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 mt-2">
+                        <button
+                            type="submit"
+                            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 mt-2"
+                        >
                             Change Username
                         </button>
                     </form>

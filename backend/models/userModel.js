@@ -80,4 +80,18 @@ function updateUserProfile(userID, firstName, lastName) {
     });
 }
 
-module.exports = { findUserByUsername, createUser, findUserFullName, findUserRole, findUserDetail, updateUserProfile};
+function uploadImage(attachmentOwnerId, attachmentLocation) {
+    return new Promise((resolve, reject) => {
+        const query = 'INSERT INTO attachment (attachmentOwnerId, attachmentLocation) VALUES (?, ?)';
+        db.query(query, [attachmentOwnerId, attachmentLocation], (error, results) => {
+            if (error) {
+                console.error('ERROR UPLOADING IMAGE: ', error);
+                return reject(error);
+            }
+            resolve(results);
+        });
+    });
+}
+
+
+module.exports = { findUserByUsername, createUser, findUserFullName, findUserRole, findUserDetail, updateUserProfile, uploadImage};

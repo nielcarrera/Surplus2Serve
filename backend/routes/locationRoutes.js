@@ -6,7 +6,6 @@ const foodController = require('../controllers/foodController');
 const locationController = require('../controllers/locationController');
 const conversationController = require('../controllers/conversationController');
 
-
 router.get('/locations', locationController.getLocations);
 router.post('/add-location', locationController.addLocation);
 router.put('/updateLocation', locationController.updateLocation);
