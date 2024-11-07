@@ -1,43 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from 'axios';
 import ApprovalModal from "./request-components/ApprovalModal"; // Import the Approval Modal
 
-export default function Notifications() {
-  // Dummy data for notifications with added date, time, and IDs
-  const initialNotifications = [
-    {
-      id: 1,
-      type: "Verification Requests",
-      description: "@janedoe123 posted a verification request.",
-      date: "2024-11-07T10:00:00.000Z",
-      verificationId: "13", 
-    },
-    {
-      id: 2,
-      type: "Food Approvals",
-      description: "@janedoe123 posted a food for approval.",
-      date: "2024-11-07T11:30:00.000Z",
-      foodId: "12", 
-    },
-    {
-      id: 3,
-      type: "Verification Requests",
-      description: "@brentfaiyaz1 posted a verification request.",
-      date: "2024-11-06T14:00:00.000Z",
-      verificationId: "12", 
-    },
-    {
-      id: 4,
-      type: "Food Approvals",
-      description: "@brentfaiyaz1 posted a food for approval.",
-      date: "2024-11-06T16:15:00.000Z",
-      foodId: "1", 
-    },
-  ];
-
-  const [notifications, setNotifications] = useState(initialNotifications);
+export default function Notifications({ userId }) {
+  const [notifications, setNotifications] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentFoodId, setCurrentFoodId] = useState(null);
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
+
+  // Function to fetch notifications
+  const fetchData = async () => {
+    try {
+      const notificationResponse = await axios.get(`http://localhost:5000/notifications/fetchUserNotifs/${userId}`);
+      setNotifications(notificationResponse.data);
+      setLoading(false);
+    } catch (err) {
+      console.error("Error fetching notifications:", err);
+      setError("Failed to fetch notifications. Please try again.");
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [userId]);
 
   // Function to format the date and time without milliseconds
   const formatDate = (dateStr) => {
@@ -55,9 +42,9 @@ export default function Notifications() {
   // Sorting and filtering handlers
   const handleSort = (type) => {
     if (type === "All") {
-      setNotifications(initialNotifications); // Show all notifications
+      fetchData(); // Refetch all notifications to reset filter
     } else {
-      const filtered = initialNotifications.filter((notification) => notification.type === type);
+      const filtered = notifications.filter((notification) => notification.type === type);
       setNotifications(filtered);
     }
   };
@@ -75,40 +62,43 @@ export default function Notifications() {
 
   const handleStatus = async (foodId, status) => {
     try {
-      // Await the axios request to ensure it completes before proceeding
       const response = await axios.put('http://localhost:5000/api/update-food-status', {
         id: foodId,
         status: status
       });
-
-      // Handle the response
       alert(`Request ${foodId} status updated to: ${status}`);
       console.log(response);
 
-      // Update the filtered requests locally (simulating a backend update)
       setNotifications((prevNotifications) =>
         prevNotifications.map((notification) =>
           notification.foodId === foodId ? { ...notification, FoodStatus: status } : notification
         )
       );
     } catch (err) {
-      // Handle any errors that occur during the API call
       console.error("Error updating status:", err);
       alert('There was an error updating the status. Please try again.');
     }
   };
 
   const handleApprove = () => {
-    // Call handleStatus with 'approved' when user clicks approve
     handleStatus(currentFoodId, 'approved');
-    closeModal(); // Close the modal after the action
+    closeModal();
   };
 
   const handleDeny = () => {
-    // Call handleStatus with 'denied' when user clicks deny
     handleStatus(currentFoodId, 'denied');
-    closeModal(); // Close the modal after the action
+    closeModal();
   };
+
+  // If loading, display a loading indicator
+  if (loading) {
+    return <p>Loading notifications...</p>;
+  }
+
+  // If there's an error, display the error message
+  if (error) {
+    return <p className="text-red-500">{error}</p>;
+  }
 
   return (
     <div className="container mx-auto p-6 max-w-4xl">
@@ -136,21 +126,22 @@ export default function Notifications() {
       </div>
 
       <div className="notifications-container space-y-4">
-        {notifications.map((notification) => (
-          <div key={notification.id} className="nc-card p-4 bg-white shadow-lg rounded-lg hover:shadow-xl transition duration-200 ease-in-out transform hover:scale-105">
+      {notifications.length > 0 ? (
+        notifications.map((notification) => (
+          <div key={notification.notificationID} className="nc-card p-4 bg-white shadow-lg rounded-lg hover:shadow-xl transition duration-200 ease-in-out transform hover:scale-105">
             <div className="flex justify-between items-center mb-4">
               <div className="flex items-center space-x-2">
                 <div
                   className={`w-3 h-3 rounded-full ${notification.type === "Verification Requests" ? "bg-blue-500" : "bg-yellow-500"}`}
                 />
-                <span className="text-lg font-medium text-gray-700">{notification.description}</span>
+                <span className="text-lg font-medium text-gray-700">{notification.message}</span>
               </div>
             </div>
             <div className="text-xs text-gray-500 mb-2">
               {notification.foodId && (
                 <span
                   className="cursor-pointer text-blue-600 hover:underline"
-                  onClick={() => openModal(notification.foodId)} // Open modal when clicking on food ID
+                  onClick={() => openModal(notification.foodId)}
                 >
                   Food ID: {notification.foodId}
                 </span>
@@ -158,13 +149,15 @@ export default function Notifications() {
               {notification.verificationId && <span>Verification Request ID: {notification.verificationId}</span>}
             </div>
             <div className="flex justify-between items-center mt-4">
-              <span className="text-xs text-gray-500">{formatDate(notification.date)}</span>
+              <span className="text-xs text-gray-500">{formatDate(notification.createdAt)}</span>
             </div>
           </div>
-        ))}
+        ))
+      ) : (
+        <p>No notifications available.</p>
+      )}
       </div>
 
-      {/* The ApprovalModal will be passed state to open/close and approval actions */}
       <ApprovalModal
         isOpen={isModalOpen}
         onClose={closeModal}

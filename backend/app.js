@@ -5,6 +5,7 @@ const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const locationRoutes = require('./routes/locationRoutes');
 const imageRoutes = require('./controllers/imageController')
+const notifRoutes = require('./routes/notificationRoutes');
 
 const app = express();
 const port = 5000;
@@ -17,7 +18,7 @@ app.use(bodyParser.json());
 app.use('/auth', authRoutes);
 app.use('/api', locationRoutes);
 app.use('/images', imageRoutes); 
-
+app.use('/notifications', notifRoutes);
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);

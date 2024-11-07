@@ -93,5 +93,24 @@ function uploadImage(attachmentOwnerId, attachmentLocation) {
     });
 }
 
-
-module.exports = { findUserByUsername, createUser, findUserFullName, findUserRole, findUserDetail, updateUserProfile, uploadImage};
+function updateUsername(id, username){
+    return new Promise((resolve, reject) => {
+        const query = 'UPDATE user_tbl SET username = ? WHERE userID = ?';
+        db.query(query, [username, id], (error, results) => {
+            if (error) {
+                console.error('Error updating profile:', error);
+                return reject(error);
+            }
+            resolve(results);
+        });
+    });
+}
+module.exports = { 
+    updateUsername,
+    findUserByUsername, 
+    createUser, 
+    findUserFullName, 
+    findUserRole, 
+    findUserDetail, 
+    updateUserProfile, 
+    uploadImage};

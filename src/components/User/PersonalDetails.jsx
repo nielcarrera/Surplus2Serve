@@ -18,7 +18,19 @@ function PersonalDetails({ userId, name }) {
         location: ''
     });
     const [isImageUploadModalOpen, setImageUploadModalOpen] = useState(false);
-
+    const handleUsernameSubmit = async (e) => {
+        e.preventDefault();
+        console.log("Touched handleusernamesubmit", username);
+        try{
+            const response = await axios.put('http://localhost:5000/auth/update-user', {
+                userID: userId,
+                username: username
+            });
+            console.log(response.data);
+        }catch(error){
+            console.error(error);
+        }
+    };
     useEffect(() => {
         const fetchData = async () => {
             if (!userId) return;
@@ -119,10 +131,7 @@ function PersonalDetails({ userId, name }) {
                     )}
                 </div>
                 <div className="cardContainer mb-4">
-                    <form onSubmit={(e) => {
-                        e.preventDefault();
-                        console.log("Changing Username:", username);
-                    }}>
+                    <form onSubmit={handleUsernameSubmit}>
                         <div className="input-box">
                             <label htmlFor="username" className="block font-medium">USERNAME</label>
                             <input

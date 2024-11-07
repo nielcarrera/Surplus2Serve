@@ -176,5 +176,27 @@ const getUserFullName = async (req, res) => {
     }
 };
 
+const updateUsername = async (req, res) => {
+    const { userID, username } = req.body;
 
-module.exports = { register, login, fetchUserDetail, updateProfile, getUserFullName };
+    if (!userID || !username){
+        return res.status(400).json({message: 'All fields required!'});
+    }
+
+    try {
+        // Check if user already exists
+        const userExists = await userModel.findUserByUsername(username);
+        if (userExists.length > 0) {
+            console.log("User exists");
+            return res.status(400).json({ message: 'User already exists' });
+        }
+
+        await userModel.updateUsername(userID, username);
+        res.status(200).json({ message: 'Username updated successfully' });
+    } catch (error) {
+        console.error('Error updating username:', error);
+        res.status(500).json({ message: 'Error updating username' });
+    }
+};
+
+module.exports = { register, login, fetchUserDetail, updateProfile, getUserFullName, updateUsername };

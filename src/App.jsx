@@ -7,6 +7,7 @@ import Admin from './pages/Admin'
 import User from './pages/User'
 import './index.css';
 import Requests from './components/Admin/Requests'
+import SelectedFood from './components/User/SelectedFood'
 export default function App() {
    return (
     <div>
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="/admin" element={<Admin />} />
           <Route path="/user" element={<User />} />
           <Route path="/food-approval/:id" element={<Requests />} />
+          <Route path="/foodFeed/:id" element={<SelectedFood/>}/>
         </Routes> 
       </BrowserRouter>
 

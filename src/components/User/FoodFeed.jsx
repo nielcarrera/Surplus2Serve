@@ -23,7 +23,7 @@ function FoodFeed() {
                 setCategory(categoryResponse.data);
                 setFood(foodResponse.data);
                 setLocation(locationResponse.data);
-                
+                console.log(food);
                 // Set filtered requests based on the fetched food data
                 setFilteredRequests(foodResponse.data);
             } catch (err) {
@@ -86,6 +86,7 @@ function FoodFeed() {
                         filteredRequests.map((request, index) => (
                             <FoodCard
                                 key={index}
+                                id = {request.foodId}
                                 name={request.Foodname}
                                 quantity={request.quantity}
                                 location={request.location}

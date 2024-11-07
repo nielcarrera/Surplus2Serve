@@ -70,7 +70,9 @@ function Adminpage() {
       case 'Settings':
         return <Settings userID={userID} fullName={username} />;
       case 'Notifications':
-        return <Notifications/>
+        return <Notifications
+          userId = {userID}
+        />
       default:
         return <Admin username={username} />;
     }
