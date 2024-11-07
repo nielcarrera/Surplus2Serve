@@ -26,6 +26,7 @@ router.delete('/deleteCategory/:categoryId', foodController.deleteFoodCategory);
 
 router.get('/conversations/:userID', conversationController.fetchUserConversations);
 router.get('/messages/:conversationId', conversationController.getMessagesForConversation);
+router.post('/createFoodConversation', conversationController.createFoodConversation);
 
 router.post('/sendMessage', conversationController.sendMessage);
 // Update food status endpoint

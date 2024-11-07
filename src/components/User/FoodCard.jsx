@@ -1,15 +1,25 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function FoodCard({ id, name, quantity, location, description, editHandler, archiveHandler }) {
+export default function FoodCard({ ownerId ,id, name, quantity, location, description, status,editHandler, archiveHandler }) {
     const navigate = useNavigate();
+    // Define the foodDetails object
+    const foodDetails = {
+        ownerId: ownerId,
+        foodid: id,
+        name: name,
+        quantity: quantity,
+        description: description
+    };
 
     // Conditional click handler
     const handleOnClick = () => {
         if (id) {
-            navigate(`/foodFeed/${id}`);
+            // Pass foodDetails as state
+            navigate(`/foodFeed/${id}`, { state: foodDetails });
         }
     };
+
 
     return (
         <div 

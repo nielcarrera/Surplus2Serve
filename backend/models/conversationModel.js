@@ -33,5 +33,12 @@ const insertMessage = (conversationId, senderId, receiverId, messageText, callba
         });
     });
 };
-
-module.exports = { getUserConversations, getMessagesByConversationId, insertMessage };
+const createFoodConversation = (id1, id2, message, foodId, interestedId, callback) => {
+    const query = 'CALL InsertConversation(?,?,?,?,?);';
+    db.query(query, [id1, id2, message, foodId, interestedId], callback);
+}
+module.exports = { 
+    getUserConversations, 
+    getMessagesByConversationId, 
+    insertMessage,
+    createFoodConversation };

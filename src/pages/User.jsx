@@ -64,7 +64,9 @@ function Userpage() {
           userID={id}
         />;
       case 'Food Feed':
-        return <FoodFeed/>;
+        return <FoodFeed
+          id = {id}
+        />;
       case 'My Surplus':
         return <FoodPostingInsert
           id = {id}

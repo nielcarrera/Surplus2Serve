@@ -61,7 +61,7 @@ const updateFoodStatus = (req, res) => {
           // Check if any rows were affected
           if (result.affectedRows > 0) {
              // Insert the notification after image details are stored
-            const message = `Your food with the id ${id}, was ${status}`;
+            const message = `Your food with the id ${id}, was  ${status.toLowerCase()}`;
             notificationModel.insertNotification(ownerId, status, message, (error, results) => {
               if (error) {
                   console.error("Database insertion error:", error);
@@ -83,7 +83,6 @@ const updateFoodStatus = (req, res) => {
     }
     
 };
-
 const insertFoodCategory = (req, res) => {
     const { name } = req.body;
   
@@ -114,7 +113,6 @@ const insertFoodCategory = (req, res) => {
       });
     });
 };
-
 const updateFoodCategory = (req, res) => {
     const { category, categoryId } = req.body;
   
@@ -142,7 +140,6 @@ const updateFoodCategory = (req, res) => {
     });
     
 };
-  
 const deleteFoodCategory = (req, res) => {
     // Get categoryId from the request parameters (from the URL)
     const { categoryId } = req.params;
@@ -169,9 +166,6 @@ const deleteFoodCategory = (req, res) => {
       res.status(200).json({ message: 'Category deleted successfully', id: categoryId });
     });
 };
-
-
-
 // Create a new food post
 const createFoodPost = async(req, res) => {
   // Destructure fields from the request body
@@ -264,7 +258,6 @@ const createFoodPost = async(req, res) => {
     res.status(500).json({ message: "An unexpected error occurred." });
   }
 };
-
 const fetchUserDetail = async (req, res) => {
   const { userId } = req.body; // Extract userId from the request body
   console.log("User Id:", userId); // Check if userId is received correctly

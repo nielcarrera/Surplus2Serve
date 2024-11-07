@@ -1,5 +1,5 @@
 const conversationModel = require('../models/conversationModel');
-
+const notificationModel = require('../models/notificationModel');
 // Controller to fetch user conversations
 const fetchUserConversations = (req, res) => {
     const userID = req.params.userID; // Get userID from the request parameters
@@ -54,5 +54,46 @@ const sendMessage = (req, res) => {
     });
 };
 
+const createFoodConversation = (req, res) => {
+    const { id1, id2, message, foodId, interestedId } = req.body;
+    console.log(id1, id2, message, foodId, interestedId);
 
-module.exports = { fetchUserConversations,  getMessagesForConversation, sendMessage};
+    if (!id1 || !id2 || !message || !foodId || !interestedId) {
+        return res.status(400).json({ message: "All fields are required" });
+    }
+
+    conversationModel.createFoodConversation(
+        id1,
+        id2,
+        message,
+        foodId,
+        interestedId,
+        (err, result) => {
+            if (err) {
+                console.error("Error creating conversation:", err);
+                return res.status(500).json({ message: "Internal Server Error" });
+            }
+
+            // Insert a notification for the food owner
+            notificationModel.insertNotification(id2, 
+                "New Conversation", 
+                `Someone has shown interest in your food listing (ID: ${foodId}).`, 
+                (notifErr, notifResult) => {  // Rename `res` to `notifResult`
+                    if (notifErr) {
+                        console.error("Error creating notification:", notifErr);
+                        return res.status(500).json({ message: "Internal Server Error" });
+                    }
+
+                    // Return success response
+                    return res.status(200).json({ success: true, message: "Conversation created" });
+                }
+            );
+        }
+    );
+};
+
+module.exports = { 
+    fetchUserConversations,  
+    getMessagesForConversation, 
+    sendMessage,
+    createFoodConversation};

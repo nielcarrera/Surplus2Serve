@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import FoodCard from "./FoodCard";
 
-function FoodFeed() {
+function FoodFeed({id}) {
   const [browseFood, setBrowseFood] = useState("");
   const [food, setFood] = useState([]);
   const [category, setCategory] = useState([]);
@@ -78,21 +78,25 @@ function FoodFeed() {
                     <button className='search-button' onClick={handleSearch}>Search</button>
                 </div>
                 <div className="food-list">
-                    {filteredRequests.length > 0 ? (
-                        filteredRequests.map((request, index) => (
+                {filteredRequests.length > 0 ? (
+                    filteredRequests
+                        .filter((request) => request.userId !== id) // Filter requests by sessionId
+                        .map((request, index) => (
                             <FoodCard
                                 key={index}
-                                id = {request.foodId}
+                                ownerId={request.userId}
+                                id={request.foodId}
                                 name={request.Foodname}
                                 quantity={request.quantity}
                                 location={request.location}
+                                description={request.description}
                             />
                         ))
-                    ) : (
-                        <div className="no-results">
-                            No results.
-                        </div>
-                    )}
+                ) : (
+                    <div className="no-results">
+                        No results.
+                    </div>
+                )}
                 </div>    
             </div>
         </main>
